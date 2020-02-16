@@ -9,7 +9,6 @@ pub fn decompile(binary_buffer: &Vec<u8>) {
 
 }
 
-
 fn extract_opcodes(binary_buffer: &Vec<u8>) -> Vec<u16> {
     let mut opcodes:Vec<u16> = Vec::new();
 
