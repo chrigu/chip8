@@ -1,3 +1,6 @@
+pub mod cpu;
+pub mod display;
+
 pub fn decompile(binary_buffer: &Vec<u8>) {
     println!("{:?}", binary_buffer);
 
