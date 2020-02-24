@@ -25,17 +25,17 @@ impl Display {
         let mut collision = false;
 
         for (sprite_row, byte) in sprite.iter().enumerate() {
+
             for bit in 0..8 {
 
                 let x = x_left + bit;
                 let y = y_top + sprite_row;
 
                 let x_display = self.wrap_x(x);
-
                 let y_display = self.wrap_y(y);
 
-                let display_position = y_display * WIDTH + x_display + bit;
-                let sprite_bit = byte & (1 << bit);
+                let display_position = y_display * WIDTH + x_display;
+                let sprite_bit = byte & (0x01 << (7 -bit));
 
                 if self.memory[display_position] && sprite_bit > 1 {
                     collision = true;
@@ -46,6 +46,10 @@ impl Display {
         }
 
         collision
+    }
+
+    pub fn get_pixel(&mut self, x: usize, y: usize) -> bool {
+        self.memory[x + WIDTH * y]
     }
 
     fn wrap_x(&self, x: usize) -> usize {
@@ -110,19 +114,61 @@ mod tests {
         let new_y = display.wrap_y(HEIGHT-1);
         assert_eq!(HEIGHT-1, new_y);
     }
+
+    #[test]
+    fn draw_display() {
+        let mut display = Display::new();
+
+        let sprite = vec![0b00011000, 0b01000001];
+        let collision = display.draw_sprite_at_position(0, 0, &sprite);
+
+        assert_eq!(false, display.get_pixel(0, 0));
+        assert_eq!(false, display.get_pixel(1, 0));
+        assert_eq!(false, display.get_pixel(2, 0));
+        assert_eq!(true, display.get_pixel(3, 0));
+        assert_eq!(true, display.get_pixel(4, 0));
+        assert_eq!(false, display.get_pixel(5, 0));
+        assert_eq!(false, display.get_pixel(6, 0));
+        assert_eq!(false, display.get_pixel(7, 0));
+    
+        assert_eq!(false, display.get_pixel(0, 1));
+        assert_eq!(true, display.get_pixel(1, 1));
+        assert_eq!(false, display.get_pixel(2, 1));
+        assert_eq!(false, display.get_pixel(3, 1));
+        assert_eq!(false, display.get_pixel(4, 1));
+        assert_eq!(false, display.get_pixel(5, 1));
+        assert_eq!(false, display.get_pixel(6, 1));
+        assert_eq!(true, display.get_pixel(7, 1));
+    }
+
+    #[test]
+    fn detect_collision() {
+        let mut display = Display::new();
+
+        let sprite1 = vec![0b00011000];
+        display.draw_sprite_at_position(0, 0, &sprite1);
+
+        let sprite2 = vec![0b00010000];
+        let collision = display.draw_sprite_at_position(0, 0, &sprite2);
+
+        assert_eq!(true, collision);
+    }
+
+    #[test]
+    fn detect_no_collision() {
+        let mut display = Display::new();
+
+        let sprite1 = vec![0b00001000];
+        display.draw_sprite_at_position(0, 0, &sprite1);
+
+        let sprite2 = vec![0b00010000];
+        let collision = display.draw_sprite_at_position(0, 0, &sprite2);
+
+        assert_eq!(false, collision);
+    }
+
 }
 
-// (0..=100)
-// .flat_map(|noun| (0..=100).map(move |verb| (noun, verb)))
-// .filter_map(|(noun, verb)| {
-//     let mut v = code.clone();
-//     v[1] = noun;
-//     v[2] = verb;
-//     run(v).map(|r| (noun, verb, r))
-// })
-// .find(|(_, _, r)| *r == target)
-// .map(|(noun, verb, _)| 100 * noun + verb)
-// .ok_or(0)
 
 /*
 For each line in the sprite
