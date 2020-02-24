@@ -37,6 +37,8 @@ impl Cpu {
         // fetch opcode
         let opcode = read_word(self.memory, self.pc);
 
+        self.pc += 2;
+
         match opcode {
             0x00E0 => { // Clear the screen.
                 self.display.clear_screen();
@@ -45,12 +47,27 @@ impl Cpu {
                 self.sp = self.sp -1;
                 self.pc = self.stack[self.sp as usize];
             }
-            0xA000..=0xAFFF => { // Set I
-                self.i = opcode & 0x0FFF
+            0x1000..=0x1FFF => { // Jump to  
+                self.pc = opcode & 0x0FFF;
+            }
+            0x3000..=0x3FFF => { // Skip  
+                let value = opcode & 0x0FFF;
+                let register = opcode & 0x0F00;
+
+                if self.v[register as usize] as usize == value as usize{
+                    self.pc += 2;
+                }
             }
             0x6000..=0x6FFF => { // Set vX 
                 let register = opcode & 0x0F00;
                 self.v[register as usize] = opcode_register_value(opcode);
+            }
+            0x7000..=0x7FFF => { // Add vX 
+                let register = opcode & 0x0F00;
+                self.v[register as usize] = self.v[register as usize]  + opcode_register_value(opcode);
+            }
+            0xA000..=0xAFFF => { // Set I
+                self.i = opcode & 0x0FFF
             }
             0xD000..=0xDFFF => { // Draw sprite
                 let x_pos = opcode_3rd_octet(opcode);
