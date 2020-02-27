@@ -48,6 +48,11 @@ impl Display {
         collision
     }
 
+    pub fn read_display(&mut self) -> [bool; NUM_PIXELS] {
+        // todo return ref somehow
+        self.memory.clone()
+    }
+
     pub fn get_pixel(&mut self, x: usize, y: usize) -> bool {
         self.memory[x + WIDTH * y]
     }

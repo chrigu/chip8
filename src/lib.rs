@@ -1,6 +1,5 @@
+mod display;
 pub mod cpu;
-pub mod display;
-
 mod utils;
 
 use wasm_bindgen::prelude::*;

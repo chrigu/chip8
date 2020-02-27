@@ -1,6 +1,15 @@
 use crate::display::{Display};
 
+use wasm_bindgen::prelude::*;
 
+// todo find better solution, don't repeat display...
+// #[wasm_bindgen]
+// #[derive(Clone, Copy)]
+// pub struct DisplayMemory {
+//     memory: Vec<bool>
+// }
+
+#[wasm_bindgen]
 pub struct Cpu {
     memory: [u8; 4096],
     v: [u8; 16],
@@ -11,6 +20,7 @@ pub struct Cpu {
     stack: [u16; 16]
 }
 
+#[wasm_bindgen]
 impl Cpu {
     pub fn new() -> Cpu {
         Cpu {
@@ -24,7 +34,7 @@ impl Cpu {
         }
     }
 
-    pub fn init(&mut self, rom: &Vec<u8>) {
+    pub fn init(&mut self, rom: &[u8]) {
         self.pc = 0x200;
         self.sp = 0;
         self.i = 0;
@@ -54,7 +64,7 @@ impl Cpu {
                 let value = opcode & 0x0FFF;
                 let register = opcode & 0x0F00;
 
-                if self.v[register as usize] as usize == value as usize{
+                if self.v[register as usize] as usize == value as usize {
                     self.pc += 2;
                 }
             }
@@ -91,10 +101,17 @@ impl Cpu {
         }
     }
 
+    pub fn read_display(&mut self) -> *const bool {
+        let memory = self.display.read_display();
+        let display = &memory[0..32*64];
+
+        display.as_ptr()
+    }
+
 }
 
 fn read_word(memory: [u8; 4096], index: u16) -> u16 {
-    (memory[index as usize] << 8 | memory[index as usize + 1]) as u16
+    (memory[index as usize] as u16) << 8 | memory[index as usize + 1] as u16
 }
 
 fn opcode_register_value(opcode: u16) -> u8 {
