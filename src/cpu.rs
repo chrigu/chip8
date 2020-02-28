@@ -1,7 +1,15 @@
 use console_error_panic_hook;
+extern crate web_sys;
+
 use crate::display::{Display, NUM_PIXELS};
 
 use wasm_bindgen::prelude::*;
+
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    }
+}
 
 #[wasm_bindgen]
 pub fn init_panic_hook() {
@@ -75,7 +83,7 @@ impl Cpu {
                 }
             }
             0x6000..=0x6FFF => { // Set vX 
-                let register = opcode & 0x0F00;
+                let register = ((opcode & 0x0F00) >> 12);
                 self.v[register as usize] = opcode_register_value(opcode);
             }
             0x7000..=0x7FFF => { // Add vX 
@@ -83,18 +91,23 @@ impl Cpu {
                 self.v[register as usize] = self.v[register as usize]  + opcode_register_value(opcode);
             }
             0xA000..=0xAFFF => { // Set I
-                self.i = opcode & 0x0FFF
+                self.i = opcode & 0x0FFF;
             }
             0xD000..=0xDFFF => { // Draw sprite
-                let x_pos = opcode_3rd_octet(opcode);
-                let y_pos = opcode_2nd_octet(opcode);
+                let vx = opcode_3rd_octet(opcode) as usize;
+                let vy = opcode_2nd_octet(opcode) as usize;
                 let sprite_size = opcode_1st_octet(opcode) as usize;
-                let sprite_address = self.memory[self.i as usize] as usize;
-
+                let sprite_address = self.i as usize;
+                
                 let sprite_address_end = (sprite_address + sprite_size) as usize;
                 let sprite = &self.memory[sprite_address..sprite_address_end];
+                log!("x: {}, y: {}, size: {}, address: {}, opcode: {}", self.v[vx], self.v[vy], sprite_size, sprite_address, opcode);
 
-                self.display.draw_sprite_at_position(x_pos as usize, y_pos as usize, &sprite);
+                for (i, c) in sprite.iter().enumerate() {
+                    log!("bit {}", c);
+                }
+
+                self.display.draw_sprite_at_position(self.v[vx] as usize, self.v[vy] as usize, &sprite);
 
                 // get bytes
                 // draw to display
@@ -109,6 +122,10 @@ impl Cpu {
 
     pub fn read_display(&mut self) -> *const [bool; NUM_PIXELS] {
         self.display.read_display()
+    }
+
+    pub fn read_pc(&mut self) -> u16 {
+        self.pc
     }
 
 }
@@ -126,11 +143,11 @@ fn opcode_register_value(opcode: u16) -> u8 {
 // }
 
 fn opcode_3rd_octet(opcode: u16) -> u8 {
-    (opcode & 0x0F00) as u8
+    ((opcode & 0x0F00) >> 8) as u8
 }
 
 fn opcode_2nd_octet(opcode: u16) -> u8 {
-    (opcode & 0x00F0) as u8
+    ((opcode & 0x00F0) >> 4) as u8
 }
 
 fn opcode_1st_octet(opcode: u16) -> u8 {

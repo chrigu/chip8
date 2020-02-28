@@ -43,4 +43,22 @@ function handleFileSelect(evt) {
     
   }
 
+  function tick () {
+      cpu.emulate_cycle();
+      console.log(cpu.read_pc());
+      const disp2 = new Uint8Array(memory.buffer, displayPtr, 32 * 64);
+      let text = '';
+      for(let i = 0;i < 32 * 64;i++) {
+        text += disp2[i];
+          if (i > 0 && i % 64 === 0) {
+              text += '\n';
+          }
+      }
+
+      document.getElementById('display').innerHTML = text;
+  }
+
   document.getElementById('rom').addEventListener('change', handleFileSelect, false);
+  
+  
+  document.getElementById('tick').addEventListener('click', tick, false);
