@@ -20,7 +20,7 @@ function handleFileSelect(evt) {
     document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
 
 
-    const buffer = new ArrayBuffer(3583);
+    const buffer = new ArrayBuffer(3584);
     const u8Buffer = new Uint8Array(buffer);
 
     var reader = new FileReader();
