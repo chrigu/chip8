@@ -1,11 +1,10 @@
 import { memory } from "chip8/chip8_bg";
-import {Cpu} from "chip8";
+import {Cpu, init_panic_hook} from "chip8";
 
+init_panic_hook();
 const cpu = Cpu.new();
 const displayPtr = cpu.read_display();
 const display = new Uint8Array(memory.buffer, displayPtr, 32 * 64);
-
-console.log(cpu, display);
 
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
@@ -31,8 +30,11 @@ function handleFileSelect(evt) {
         for (let i = 0;i < romData.length;i++) {
             u8Buffer[i] = romData[i];
         }
-
         console.log(files, theFile, rom, u8Buffer);
+
+        console.log(cpu, display)
+        cpu.init(u8Buffer);
+        console.log(cpu)
 
     })
 

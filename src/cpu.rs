@@ -1,6 +1,12 @@
+use console_error_panic_hook;
 use crate::display::{Display, NUM_PIXELS};
 
 use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn init_panic_hook() {
+    console_error_panic_hook::set_once();
+}
 
 // todo find better solution, don't repeat display...
 // #[wasm_bindgen]
