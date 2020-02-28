@@ -1,4 +1,4 @@
-use crate::display::{Display};
+use crate::display::{Display, NUM_PIXELS};
 
 use wasm_bindgen::prelude::*;
 
@@ -101,11 +101,8 @@ impl Cpu {
         }
     }
 
-    pub fn read_display(&mut self) -> *const bool {
-        let memory = self.display.read_display();
-        let display = &memory[0..32*64];
-
-        display.as_ptr()
+    pub fn read_display(&mut self) -> *const [bool; NUM_PIXELS] {
+        self.display.read_display()
     }
 
 }

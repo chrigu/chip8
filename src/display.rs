@@ -1,6 +1,6 @@
 const WIDTH: usize = 64;
 const HEIGHT: usize = 32;
-const NUM_PIXELS: usize = HEIGHT * WIDTH;
+pub const NUM_PIXELS: usize = HEIGHT * WIDTH;
 
 pub struct Display {
     memory: [bool; NUM_PIXELS]
@@ -48,9 +48,9 @@ impl Display {
         collision
     }
 
-    pub fn read_display(&mut self) -> [bool; NUM_PIXELS] {
+    pub fn read_display(&mut self) -> *const [bool; NUM_PIXELS] {
         // todo return ref somehow
-        self.memory.clone()
+        &self.memory
     }
 
     pub fn get_pixel(&mut self, x: usize, y: usize) -> bool {
