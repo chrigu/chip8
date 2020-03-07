@@ -83,7 +83,7 @@ impl Cpu {
                 }
             }
             0x6000..=0x6FFF => { // Set vX 
-                let register = ((opcode & 0x0F00) >> 12);
+                let register = ((opcode & 0x0F00) >> 8);
                 self.v[register as usize] = opcode_register_value(opcode);
             }
             0x7000..=0x7FFF => { // Add vX 
@@ -101,11 +101,12 @@ impl Cpu {
                 
                 let sprite_address_end = (sprite_address + sprite_size) as usize;
                 let sprite = &self.memory[sprite_address..sprite_address_end];
-                log!("x: {}, y: {}, size: {}, address: {}, opcode: {}", self.v[vx], self.v[vy], sprite_size, sprite_address, opcode);
+                // log!("x: {}, y: {}, size: {}, address: {}, opcode: {}", self.v[vx], self.v[vy], sprite_size, sprite_address, opcode);
+                log!("vx: {}, vy: {}", vx, vy);
 
-                for (i, c) in sprite.iter().enumerate() {
-                    log!("bit {}", c);
-                }
+                // for (i, c) in sprite.iter().enumerate() {
+                //     log!("bit {}", c);
+                // }
 
                 self.display.draw_sprite_at_position(self.v[vx] as usize, self.v[vy] as usize, &sprite);
 
