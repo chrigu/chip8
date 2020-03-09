@@ -74,11 +74,32 @@ impl Cpu {
             0x1000..=0x1FFF => { // Jump to  
                 self.pc = opcode & 0x0FFF;
             }
-            0x3000..=0x3FFF => { // Skip  
+            0x2000..=0x2FFF => { // Call subroutine 
+                self.stack[self.sp as usize] = self.pc;
+                self.sp = self.sp +1;
+                self.pc = opcode & 0x0FFF;
+            }
+            0x3000..=0x3FFF => { // Skip if equal
                 let value = opcode & 0x0FFF;
                 let register = opcode & 0x0F00;
 
                 if self.v[register as usize] as usize == value as usize {
+                    self.pc += 2;
+                }
+            }
+            0x4000..=0x4FFF => { // Skip if not equal
+                let value = opcode & 0x0FFF;
+                let register = opcode & 0x0F00;
+
+                if self.v[register as usize] as usize != value as usize {
+                    self.pc += 2;
+                }
+            }
+            0x5000..=0x5FFF => { // Skip if register values equal 
+                let vx = opcode_3rd_octet(opcode) as usize;
+                let vy = opcode_2nd_octet(opcode) as usize;
+
+                if self.v[vx] as usize == self.v[vy] as usize {
                     self.pc += 2;
                 }
             }
@@ -89,6 +110,53 @@ impl Cpu {
             0x7000..=0x7FFF => { // Add vX 
                 let register = opcode & 0x0F00;
                 self.v[register as usize] = self.v[register as usize]  + opcode_register_value(opcode);
+            }
+            0x8000..=0x8FFF => { // Assign value from to register
+
+                let first_octet = opcode_1st_octet(opcode);
+                let vx = opcode_3rd_octet(opcode) as usize;
+                let vy = opcode_2nd_octet(opcode) as usize;
+
+                match first_octet {
+                    0 => {
+                        self.v[vx] = self.v[vy] as u8;
+                    }
+                    1 => {
+                        self.v[vx] = (self.v[vx] | self.v[vy]) as u8;
+                    }
+                    2 => {
+                        self.v[vx] = (self.v[vx] & self.v[vy]) as u8;
+                    }
+                    3 => {
+                        self.v[vx] = (self.v[vx] ^ self.v[vy]) as u8;
+                    }
+                    4 => {
+                        let sum:usize = self.v[vy] as usize + self.v[vy] as usize;
+
+                        self.v[0xF] = if sum > 255 {
+                            1
+                        } else {
+                            0
+                        };
+
+                        self.v[vx] = sum as u8;
+                    }
+                    5 => {
+                        let sum = self.v[vx] + self.v[vy];
+
+                        self.v[0xF] = if self.v[vx] > self.v[vy] {
+                            1
+                        } else {
+                            0
+                        };
+
+                        self.v[vx] = self.v[vx].wrapping_sub(self.v[vy]);
+                    }
+                    _ => {
+                        println!("unkown opcode {:?}", opcode);
+                    }
+                }
+
             }
             0xA000..=0xAFFF => { // Set I
                 self.i = opcode & 0x0FFF;
@@ -155,6 +223,7 @@ fn opcode_1st_octet(opcode: u16) -> u8 {
     (opcode & 0x000F) as u8
 }
 
+// todo: add tests
 
 /*
 00e0 a22a 600c 6108 d01f 7009 a239 d01f
