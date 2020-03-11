@@ -57,12 +57,11 @@ impl Cpu {
     }
 
     pub fn emulate_cycle(&mut self) {
-
-        // fetch opcode
         let opcode = read_word(self.memory, self.pc);
-
         self.pc += 2;
+    }
 
+    pub fn handle_opcode(&mut self, opcode:u16) {
         match opcode {
             0x00E0 => { // Clear the screen.
                 self.display.clear_screen();
@@ -142,8 +141,6 @@ impl Cpu {
                         self.v[vx] = sum as u8;
                     }
                     5 => {
-                        let sum = self.v[vx] + self.v[vy];
-
                         self.v[0xF] = if self.v[vx] > self.v[vy] {
                             1
                         } else {
@@ -152,11 +149,36 @@ impl Cpu {
 
                         self.v[vx] = self.v[vx].wrapping_sub(self.v[vy]);
                     }
+                    6 => {
+                        self.v[0xF] = 0x1 & self.v[vx];
+                        self.v[vx] = self.v[vx] >> 1;
+                    }
+                    7 => {
+                        self.v[0xF] = if self.v[vy] > self.v[vx] {
+                            1
+                        } else {
+                            0
+                        };
+
+                        self.v[vx] = self.v[vy].wrapping_sub(self.v[vx]);
+                    }
+                    0xE => {
+                        self.v[0xF] = (0x80 & self.v[vx]) >> 8;
+                        self.v[vx] = self.v[vx] << 1;
+                    }
                     _ => {
                         println!("unkown opcode {:?}", opcode);
                     }
                 }
 
+            }
+            0x9000..=0x9FFF => { // Skip if not equal
+                let vx = opcode_3rd_octet(opcode) as usize;
+                let vy = opcode_2nd_octet(opcode) as usize;
+
+                if self.v[vx] as usize != self.v[vy] as usize {
+                    self.pc += 2;
+                }
             }
             0xA000..=0xAFFF => { // Set I
                 self.i = opcode & 0x0FFF;
@@ -221,6 +243,49 @@ fn opcode_2nd_octet(opcode: u16) -> u8 {
 
 fn opcode_1st_octet(opcode: u16) -> u8 {
     (opcode & 0x000F) as u8
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn get_3_octet() {
+        assert_eq!(0xF, opcode_3rd_octet(0xF0A));
+    }
+
+    #[test]
+    fn get_2_octet() {
+        assert_eq!(0x1, opcode_2nd_octet(0xB1A));
+    }
+
+    #[test]
+    fn get_1_octet() {
+        assert_eq!(0x1, opcode_1st_octet(0x1));
+    }
+
+    #[test]
+    fn jump_to_address_0x1xxx() {
+        let mut cpu = Cpu::new();
+        let address = 0xA1A;
+        let opcode = 0x1000 | address;
+        cpu.handle_opcode(opcode);
+        assert_eq!(address, cpu.pc);
+    }
+
+    #[test]
+    fn call_subroutine_0x2xxx() {
+        let mut cpu = Cpu::new();
+
+        let inital_pc = cpu.pc;
+        let address = 0xA1A;
+        let opcode = 0x2000 | address;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(address, cpu.pc);
+        assert_eq!(1, cpu.sp);
+        assert_eq!(cpu.stack[0], inital_pc);
+    }
 }
 
 // todo: add tests
