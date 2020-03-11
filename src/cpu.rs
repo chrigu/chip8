@@ -59,6 +59,9 @@ impl Cpu {
     pub fn emulate_cycle(&mut self) {
         let opcode = read_word(self.memory, self.pc);
         self.pc += 2;
+
+        log!("opcode: {:x?}", opcode);
+        self.handle_opcode(opcode);
     }
 
     pub fn handle_opcode(&mut self, opcode:u16) {
@@ -79,16 +82,16 @@ impl Cpu {
                 self.pc = opcode & 0x0FFF;
             }
             0x3000..=0x3FFF => { // Skip if equal
-                let value = opcode & 0x0FFF;
-                let register = opcode & 0x0F00;
+                let value = opcode & 0x00FF;
+                let register = opcode_3rd_octet(opcode) as usize;
 
                 if self.v[register as usize] as usize == value as usize {
                     self.pc += 2;
                 }
             }
             0x4000..=0x4FFF => { // Skip if not equal
-                let value = opcode & 0x0FFF;
-                let register = opcode & 0x0F00;
+                let value = opcode & 0x00FF;
+                let register = opcode_3rd_octet(opcode) as usize;
 
                 if self.v[register as usize] as usize != value as usize {
                     self.pc += 2;
@@ -107,7 +110,7 @@ impl Cpu {
                 self.v[register as usize] = opcode_register_value(opcode);
             }
             0x7000..=0x7FFF => { // Add vX 
-                let register = opcode & 0x0F00;
+                let register = opcode_3rd_octet(opcode) as usize;
                 self.v[register as usize] = self.v[register as usize]  + opcode_register_value(opcode);
             }
             0x8000..=0x8FFF => { // Assign value from to register
@@ -285,6 +288,100 @@ mod tests {
         assert_eq!(address, cpu.pc);
         assert_eq!(1, cpu.sp);
         assert_eq!(cpu.stack[0], inital_pc);
+    }
+
+    #[test]
+    fn skip_if_equal_0x3xxx() {
+        let mut cpu = Cpu::new();
+
+        let inital_pc = cpu.pc;
+        cpu.v[8] = 2;
+
+        let opcode = 0x3802;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.pc, inital_pc + 2);
+    }
+
+    #[test]
+    fn no_skip_if_not_equal_0x3xxx() {
+        let mut cpu = Cpu::new();
+
+        let inital_pc = cpu.pc;
+        cpu.v[8] = 5;
+
+        let opcode = 0x3802;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.pc, inital_pc);
+    }
+
+    #[test]
+    fn skip_if_not_equal_0x4xxx() {
+        let mut cpu = Cpu::new();
+
+        let inital_pc = cpu.pc;
+        cpu.v[8] = 2;
+
+        let opcode = 0x480A;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.pc, inital_pc + 2);
+    }
+
+    #[test]
+    fn no_skip_if_equal_0x4xxx() {
+        let mut cpu = Cpu::new();
+
+        let inital_pc = cpu.pc;
+        cpu.v[8] = 2;
+
+        let opcode = 0x4802;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.pc, inital_pc);
+    }
+
+    #[test]
+    fn skip_if_equal_0x5xxx() {
+        let mut cpu = Cpu::new();
+
+        let inital_pc = cpu.pc;
+        cpu.v[8] = 2;
+        cpu.v[3] = 2;
+
+        let opcode = 0x5830;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.pc, inital_pc + 2);
+    }
+
+    #[test]
+    fn no_skip_if_not_equal_0x5xxx() {
+        let mut cpu = Cpu::new();
+
+        let inital_pc = cpu.pc;
+        cpu.v[8] = 2;
+        cpu.v[3] = 5;
+
+        let opcode = 0x5830;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.pc, inital_pc);
+    }
+
+    #[test]
+    fn set_vx_0x6xxx() {
+        let mut cpu = Cpu::new();
+
+        let inital_pc = cpu.pc;
+        cpu.v[0xA] = 0;
+
+        let value = 0xBC;
+        let opcode = 0x6A00 | value;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0xA] as u16, value);
     }
 }
 
