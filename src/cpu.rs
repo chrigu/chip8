@@ -133,14 +133,13 @@ impl Cpu {
                         self.v[vx] = (self.v[vx] ^ self.v[vy]) as u8;
                     }
                     4 => {
-                        let sum:usize = self.v[vy] as usize + self.v[vy] as usize;
-
+                        let sum:usize = self.v[vx] as usize + self.v[vy] as usize;
+                        
                         self.v[0xF] = if sum > 255 {
                             1
                         } else {
                             0
                         };
-
                         self.v[vx] = sum as u8;
                     }
                     5 => {
@@ -383,18 +382,152 @@ mod tests {
         cpu.handle_opcode(opcode);
         assert_eq!(cpu.v[0xA] as u16, value);
     }
+
+    #[test]
+    fn set_vx_0x7xxx() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 1;
+
+        let value = 0xBC;
+        let opcode = 0x7A00 | value;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0xA] as u16, value + 1);
+    }
+
+    #[test]
+    fn assign_vy_to_vx_0x8xx0() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 5;
+        cpu.v[0x0] = 0;
+
+        let opcode = 0x80A0;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0xA], cpu.v[0x0]);
+    }
+
+    #[test]
+    fn vy_or_vx_0x8xx1() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 5;
+        cpu.v[0x0] = 9;
+
+        let opcode = 0x80A1;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 0xD);
+    }
+
+    #[test]
+    fn vy_and_vx_0x8xx2() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 6;
+        cpu.v[0x0] = 0xA;
+
+        let opcode = 0x80A2;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 0x2);
+    }
+
+    #[test]
+    fn vy_xor_vx_0x8xx3() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 0x5;
+        cpu.v[0x0] = 0x9;
+
+        let opcode = 0x80A3;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 0xC);
+    }
+
+    #[test]
+    fn vy_add_vx_0x8xx4() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 5;
+        cpu.v[0x0] = 9;
+
+        let opcode = 0x80A4;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 14);
+        assert_eq!(cpu.v[0xF], 0);
+    }
+
+    #[test]
+    fn vy_add_vx_with_vf_0x8xx4() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 254;
+        cpu.v[0x0] = 9;
+
+        let opcode = 0x80A4;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 7);
+        assert_eq!(cpu.v[0xF], 1);
+    }
+
+    #[test]
+    fn vx_sub_vy_0x8xx5() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 10;
+        cpu.v[0x0] = 30;
+
+        let opcode = 0x80A5;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 20);
+        assert_eq!(cpu.v[0xF], 1);
+    }
+
+    #[test]
+    fn vx_sub_vy_with_vf_0x8xx5() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 20;
+        cpu.v[0x0] = 10;
+
+        let opcode = 0x80A5;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 246);
+        assert_eq!(cpu.v[0xF], 0);
+    }
+
+    #[test]
+    fn shr_0x8xx6() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0x0] = 10;
+
+        let opcode = 0x80A6;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 5);
+        assert_eq!(cpu.v[0xF], 0);
+    }
+
+    #[test]
+    fn shr_set_vf_0x8xx6() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0x0] = 11;
+
+        let opcode = 0x80A6;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 5);
+        assert_eq!(cpu.v[0xF], 1);
+    }
 }
 
-// todo: add tests
-
-/*
-00e0 a22a 600c 6108 d01f 7009 a239 d01f
-a248 7008 d01f 7004 a257 d01f 7008 a266
-d01f 7008 a275 d01f 1228 ff00 ff00 3c00
-3c00 3c00 3c00 ff00 ffff 00ff 0038 003f
-003f 0038 00ff 00ff 8000 e000 e000 8000
-8000 e000 e000 80f8 00fc 003e 003f 003b
-0039 00f8 00f8 0300 0700 0f00 bf00 fb00
-f300 e300 43e0 00e0 0080 0080 0080 0080
-00e0 00e0 
-*/
