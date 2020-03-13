@@ -165,8 +165,12 @@ impl Cpu {
                         self.v[vx] = self.v[vy].wrapping_sub(self.v[vx]);
                     }
                     0xE => {
-                        self.v[0xF] = (0x80 & self.v[vx]) >> 8;
-                        self.v[vx] = self.v[vx] << 1;
+                        self.v[0xF] = if (0x80 & self.v[vx]) > 0 {
+                            1
+                        } else {
+                            0
+                        };
+                        self.v[vx] = (self.v[vx] & 0x0F) << 1
                     }
                     _ => {
                         println!("unkown opcode {:?}", opcode);
@@ -528,6 +532,74 @@ mod tests {
         cpu.handle_opcode(opcode);
         assert_eq!(cpu.v[0x0], 5);
         assert_eq!(cpu.v[0xF], 1);
+    }
+
+    #[test]
+    fn vy_sub_vx_0x8xx7() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 30;
+        cpu.v[0x0] = 10;
+
+        let opcode = 0x80A7;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 20);
+        assert_eq!(cpu.v[0xF], 1);
+    }
+
+    #[test]
+    fn vy_sub_vx_with_vf_0x8xx7() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 10;
+        cpu.v[0x0] = 20;
+
+        let opcode = 0x80A7;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 246);
+        assert_eq!(cpu.v[0xF], 0);
+    }
+
+    #[test]
+    fn shl_with_vf_0x8xxe() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0x0] = 134;
+
+        let opcode = 0x80AE;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 0xC);
+        assert_eq!(cpu.v[0xF], 1);
+    }
+
+    #[test]
+    fn shl_0x8xxe() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0x0] = 6;
+
+        let opcode = 0x80AE;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.v[0x0], 0xC);
+        assert_eq!(cpu.v[0xF], 0);
+    }
+
+    #[test]
+    fn skip_next_0x9xx0() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0xA] = 10;
+        cpu.v[0x0] = 20;
+        let initial_pc = cpu.pc;
+
+        let opcode = 0x9A00;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.pc, initial_pc + 2);
     }
 }
 
