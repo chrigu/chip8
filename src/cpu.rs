@@ -1,5 +1,8 @@
-use console_error_panic_hook;
 extern crate web_sys;
+
+use console_error_panic_hook;
+use rand::Rng;
+
 
 use crate::display::{Display, NUM_PIXELS};
 
@@ -15,13 +18,6 @@ macro_rules! log {
 pub fn init_panic_hook() {
     console_error_panic_hook::set_once();
 }
-
-// todo find better solution, don't repeat display...
-// #[wasm_bindgen]
-// #[derive(Clone, Copy)]
-// pub struct DisplayMemory {
-//     memory: Vec<bool>
-// }
 
 #[wasm_bindgen]
 pub struct Cpu {
@@ -188,6 +184,17 @@ impl Cpu {
             }
             0xA000..=0xAFFF => { // Set I
                 self.i = opcode & 0x0FFF;
+            }
+            0xB000..=0xBFFF => { // Set pc to v0 + value
+                let offset = opcode & 0x0FFF;
+                self.pc = (self.v[0] + offset as u8) as u16;
+            }
+            0xC000..=0xCFFF => { // RND
+                let mut rng = rand::thread_rng();
+                let random_byte: u8 = rng.gen();
+                let vx = opcode_3rd_octet(opcode) as usize;
+
+                self.v[vx] = (random_byte as u16 & (opcode & 0xFF)) as u8;
             }
             0xD000..=0xDFFF => { // Draw sprite
                 let vx = opcode_3rd_octet(opcode) as usize;
@@ -600,6 +607,34 @@ mod tests {
 
         cpu.handle_opcode(opcode);
         assert_eq!(cpu.pc, initial_pc + 2);
+    }
+
+    #[test]
+    fn set_i_0xAxxx() {
+        let mut cpu = Cpu::new();
+
+        cpu.i = 0;
+        let initial_pc = cpu.pc;
+
+        let value = 0xABC;
+        let opcode = 0xA000 | value;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.i, value);
+    }
+
+    #[test]
+    fn set_i_0xBxxx() {
+        let mut cpu = Cpu::new();
+
+        cpu.v[0x0] = 10;
+        let initial_pc = cpu.pc;
+
+        let value = 20;
+        let opcode = 0xB000 | value;
+
+        cpu.handle_opcode(opcode);
+        assert_eq!(cpu.pc, value + cpu.v[0x0] as u16);
     }
 }
 
