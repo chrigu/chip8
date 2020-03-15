@@ -5,6 +5,7 @@ use rand::Rng;
 
 
 use crate::display::{Display, NUM_PIXELS};
+use crate::keyboard::Keyboard;
 
 use wasm_bindgen::prelude::*;
 
@@ -27,7 +28,8 @@ pub struct Cpu {
     sp: u8,
     i: u16,
     display: Display,
-    stack: [u16; 16]
+    stack: [u16; 16],
+    keyboard: Keyboard
 }
 
 #[wasm_bindgen]
@@ -40,7 +42,8 @@ impl Cpu {
             i: 0,
             stack: [0; 16],
             sp: 0,
-            display: Display::new()
+            display: Display::new(),
+            keyboard: Keyboard::new()
         }
     }
 
@@ -218,6 +221,26 @@ impl Cpu {
                 // detect collision
   
             }
+            0xE000..=0xEFFF => {
+                let first_two_octets = opcode_register_value(opcode);
+                let vx = opcode_3rd_octet(opcode) as usize;
+
+                match first_two_octets {
+                    0x9E => { // Skip if pressed
+                        if self.keyboard.is_key_set(self.v[vx]){
+                            self.pc += 2;
+                        }
+                    }
+                    0xA1 => { // Skip if not pressed
+                        if !self.keyboard.is_key_set(self.v[vx]) {
+                            self.pc += 2;
+                        }
+                    }
+                    _ => {
+                        println!("unkown opcode {:?}", opcode);
+                    }
+                }
+            }
             _ => {
                 println!("unkown opcode {:?}", opcode);
             }
@@ -238,6 +261,7 @@ fn read_word(memory: [u8; 4096], index: u16) -> u16 {
     (memory[index as usize] as u16) << 8 | memory[index as usize + 1] as u16
 }
 
+// todo: renanme
 fn opcode_register_value(opcode: u16) -> u8 {
     return (opcode & 0x00FF) as u8
 }

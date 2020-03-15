@@ -1,4 +1,5 @@
 mod display;
+mod keyboard;
 pub mod cpu;
 mod utils;
 
