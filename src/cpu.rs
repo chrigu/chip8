@@ -5,7 +5,7 @@ use rand::Rng;
 
 
 use crate::display::{Display, NUM_PIXELS};
-use crate::keyboard::Keyboard;
+use crate::keyboard::{Keyboard, NUM_KEYS};
 
 use wasm_bindgen::prelude::*;
 
@@ -29,7 +29,9 @@ pub struct Cpu {
     i: u16,
     display: Display,
     stack: [u16; 16],
-    keyboard: Keyboard
+    keyboard: Keyboard,
+    delay_timer: u8,
+    sound_timer: u8
 }
 
 #[wasm_bindgen]
@@ -43,7 +45,9 @@ impl Cpu {
             stack: [0; 16],
             sp: 0,
             display: Display::new(),
-            keyboard: Keyboard::new()
+            keyboard: Keyboard::new(),
+            delay_timer: 0,
+            sound_timer: 0
         }
     }
 
@@ -234,6 +238,32 @@ impl Cpu {
                     0xA1 => { // Skip if not pressed
                         if !self.keyboard.is_key_set(self.v[vx]) {
                             self.pc += 2;
+                        }
+                    }
+                    _ => {
+                        println!("unkown opcode {:?}", opcode);
+                    }
+                }
+            }
+            0xF000..=0xFFFF => {
+                let first_two_octets = opcode_register_value(opcode);
+                let vx = opcode_3rd_octet(opcode) as usize;
+
+                match first_two_octets {
+                    0x07 => { // vx = dt
+                        self.v[vx] = self.delay_timer;
+                    }
+                    0x0A => { // Skip if not pressed
+                        let mut found = false;
+                        for i in (0..NUM_KEYS) {
+                            if self.keyboard.is_key_set(i as u8) {
+                                self.v[vx] = i as u8;
+                                found = true;
+                            }
+                        }
+
+                        if !found {
+                            self.pc -=2;
                         }
                     }
                     _ => {

@@ -1,5 +1,5 @@
 
-const NUM_KEYS: usize = 16;
+pub const NUM_KEYS: usize = 16;
 
 pub struct Keyboard {
     keys: [bool; NUM_KEYS]
