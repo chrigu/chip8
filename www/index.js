@@ -3,7 +3,7 @@ import {Cpu, init_panic_hook} from "chip8";
 
 const displayWidth = 64;
 const displayHeight = 32;
-const pixelSize = 4;
+const pixelSize = 10;
 
 init_panic_hook();
 const cpu = Cpu.new();
@@ -11,8 +11,21 @@ const displayPtr = cpu.read_display();
 const display = new Uint8Array(memory.buffer, displayPtr, displayHeight * displayWidth);
 
 var displayElement = document.getElementsByClassName('display')[0];
-console.log(displayElement);
-const context = displayElement.getContext("2d");
+initDisplay();
+
+function initDisplay() {
+    const dpr = window.devicePixelRatio || 1;
+    // Get the size of the canvas in CSS pixels.
+    const rect = displayElement.getBoundingClientRect();
+    displayElement.width = rect.width * dpr;
+    displayElement.height = rect.height * dpr;
+    
+    
+    const ctx = displayElement.getContext("2d");
+    // Scale all drawing operations by the dpr, so you
+    // don't have to worry about the difference.
+    ctx.scale(dpr, dpr);
+}
 
 function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
@@ -67,16 +80,17 @@ function tick () {
 }
 
 function render (pixels) {
+    const ctx = displayElement.getContext("2d");
     for(let i = 0;i < displayHeight * displayWidth;i++) {
         let x = pixelSize * (i % displayWidth);
         let y = pixelSize * Math.floor(i / displayWidth);
-        drawPixel(x, y, pixels[i]);
+        drawPixel(x, y, pixels[i], ctx);
     }
 }
 
-function drawPixel(x, y, set) {
-    context.fillStyle = set ? 'rgb(76, 179, 91)' : 'rgb(0, 0, 0)';
-    context.fillRect(x, y, pixelSize, pixelSize); 
+function drawPixel(x, y, set, ctx) {
+    ctx.fillStyle = set ? 'rgb(76, 179, 91)' : 'rgb(0, 0, 0)';
+    ctx.fillRect(x, y, pixelSize, pixelSize); 
 }
 
 document.getElementById('rom').addEventListener('change', handleFileSelect, false);
