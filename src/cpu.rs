@@ -266,6 +266,15 @@ impl Cpu {
                             self.pc -=2;
                         }
                     }
+                    0x15 => { // set dt
+                        self.delay_timer = self.v[vx];
+                    }
+                    0x18 => { // set st
+                        self.sound_timer = self.v[vx];
+                    }
+                    0x1E => { // add i
+                        self.i += self.v[vx] as u16;
+                    }
                     _ => {
                         println!("unkown opcode {:?}", opcode);
                     }
