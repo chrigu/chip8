@@ -1,8 +1,7 @@
 extern crate web_sys;
 
 use console_error_panic_hook;
-use rand::Rng;
-
+use crate::rand::ComplementaryMultiplyWithCarryGen;
 
 use crate::display::{Display, NUM_PIXELS};
 use crate::keyboard::{Keyboard, NUM_KEYS};
@@ -31,7 +30,8 @@ pub struct Cpu {
     stack: [u16; 16],
     keyboard: Keyboard,
     delay_timer: u8,
-    sound_timer: u8
+    sound_timer: u8,
+    rand: ComplementaryMultiplyWithCarryGen
 }
 
 #[wasm_bindgen]
@@ -47,7 +47,8 @@ impl Cpu {
             display: Display::new(),
             keyboard: Keyboard::new(),
             delay_timer: 0,
-            sound_timer: 0
+            sound_timer: 0,
+            rand: ComplementaryMultiplyWithCarryGen::new(1)
         }
     }
 
@@ -197,11 +198,10 @@ impl Cpu {
                 self.pc = (self.v[0] + offset as u8) as u16;
             }
             0xC000..=0xCFFF => { // RND
-                let mut rng = rand::thread_rng();
-                let random_byte: u8 = rng.gen();
+                let random = self.rand.random();
                 let vx = opcode_3rd_octet(opcode) as usize;
 
-                self.v[vx] = (random_byte as u16 & (opcode & 0xFF)) as u8;
+                self.v[vx] = (random as u16 & (opcode & 0xFF)) as u8;
             }
             0xD000..=0xDFFF => { // Draw sprite
                 let vx = opcode_3rd_octet(opcode) as usize;
