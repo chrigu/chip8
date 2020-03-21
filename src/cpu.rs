@@ -294,6 +294,16 @@ impl Cpu {
         self.pc
     }
 
+    pub fn key_down(&mut self, key: u8) {
+        log!("key pressed down {:?}", key);
+        self.keyboard.press_key(key);
+    }
+
+    pub fn key_up(&mut self, key: u8) {
+        log!("key pressed up {:?}", key);
+        self.keyboard.release_key(key);
+    }
+
 }
 
 fn read_word(memory: [u8; 4096], index: u16) -> u16 {
