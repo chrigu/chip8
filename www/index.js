@@ -3,9 +3,12 @@ import { Cpu, init_panic_hook } from "chip8";
 
 const displayWidth = 64;
 const displayHeight = 32;
+
+let animationId = null;
 const pixelSize = 10;
 
 init_panic_hook();
+
 const cpu = Cpu.new();
 const displayPtr = cpu.read_display();
 const display = new Uint8Array(
@@ -64,7 +67,7 @@ function handleFileSelect(evt) {
 
     console.log(cpu, display);
     cpu.init(u8Buffer);
-    console.log(cpu);
+    renderLoop();
   };
 
   reader.readAsArrayBuffer(files[0]);
@@ -72,7 +75,7 @@ function handleFileSelect(evt) {
 
 function tick() {
   cpu.emulate_cycle();
-  console.log(cpu.read_pc());
+  //console.log(cpu.read_pc());
   const disp2 = new Uint8Array(
     memory.buffer,
     displayPtr,
@@ -108,16 +111,23 @@ document
   .getElementById("rom")
   .addEventListener("change", handleFileSelect, false);
 document.getElementById("tick").addEventListener("click", tick, false);
+document.getElementById("pause").addEventListener("click", pause, false);
 
 // render loop
 
 const renderLoop = () => {
-    tick();
+  tick();
+  animationId = requestAnimationFrame(renderLoop);
+};
 
-    requestAnimationFrame(renderLoop);
-  };
+function pause () {
+  cancelAnimationFrame(animationId);
+  animationId = null;
+};
 
-renderLoop();
+function isPaused () {
+  return animationId === null;
+}
 
 // keys
 document.addEventListener("keydown", keydown);

@@ -60,13 +60,7 @@ impl Cpu {
         self.memory[0x200..].copy_from_slice(rom);
 
         let fontset = self.display.get_fontset();
-        self.memory[0..fontset.len()].copy_from_slice(fontset);
-        // let mut memory_slice: &[u8] = &self.memory[0..0x200];
-
-        // // https://stackoverflow.com/questions/25225346/how-do-you-copy-between-arrays-of-different-sizes-in-rust
-        // for (memory, chars) in memory_slice.iter_mut().zip(self.display.get_fontset().iter()) {
-        //     *memory = *chars
-        // }
+        self.memory[0x50..0xA0].copy_from_slice(fontset);
     }
 
     pub fn emulate_cycle(&mut self) {
@@ -119,7 +113,7 @@ impl Cpu {
                 }
             }
             0x6000..=0x6FFF => { // Set vX 
-                let register = ((opcode & 0x0F00) >> 8);
+                let register = (opcode & 0x0F00) >> 8;
                 self.v[register as usize] = opcode_register_value(opcode);
             }
             0x7000..=0x7FFF => { // Add vX 
@@ -220,32 +214,31 @@ impl Cpu {
                 
                 let sprite_address_end = (sprite_address + sprite_size) as usize;
                 let sprite = &self.memory[sprite_address..sprite_address_end];
-                // log!("x: {}, y: {}, size: {}, address: {}, opcode: {}", self.v[vx], self.v[vy], sprite_size, sprite_address, opcode);
-                log!("vx: {}, vy: {}", vx, vy);
 
-                // for (i, c) in sprite.iter().enumerate() {
-                //     log!("bit {}", c);
-                // }
+                let collision = self.display.draw_sprite_at_position(self.v[vx] as usize, self.v[vy] as usize, &sprite);
 
-                self.display.draw_sprite_at_position(self.v[vx] as usize, self.v[vy] as usize, &sprite);
-
-                // get bytes
-                // draw to display
-                // detect collision
+                self.v[15] = if collision {
+                    0x01
+                } else {
+                    0x00
+                }
   
             }
             0xE000..=0xEFFF => {
                 let first_two_octets = opcode_register_value(opcode);
                 let vx = opcode_3rd_octet(opcode) as usize;
+                log!("0xe vx: {}, key set: {}, set {}", vx, self.v[vx], self.keyboard.is_key_set(self.v[vx]) );
 
                 match first_two_octets {
                     0x9E => { // Skip if pressed
-                        if self.keyboard.is_key_set(self.v[vx]){
+                        if self.keyboard.is_key_set(self.v[vx]) {
+                            log!("skip if");
                             self.pc += 2;
                         }
                     }
                     0xA1 => { // Skip if not pressed
                         if !self.keyboard.is_key_set(self.v[vx]) {
+                            log!("skip if not");
                             self.pc += 2;
                         }
                     }
@@ -257,6 +250,7 @@ impl Cpu {
             0xF000..=0xFFFF => {
                 let first_two_octets = opcode_register_value(opcode);
                 let vx = opcode_3rd_octet(opcode) as usize;
+                log!("0xf vx: {}, key set: {}", vx, self.v[vx]);
 
                 match first_two_octets {
                     0x07 => { // vx = dt
@@ -264,8 +258,9 @@ impl Cpu {
                     }
                     0x0A => { // Skip if not pressed
                         let mut found = false;
-                        for i in (0..NUM_KEYS) {
+                        for i in 0..NUM_KEYS {
                             if self.keyboard.is_key_set(i as u8) {
+                                log!("key set {}", vx);
                                 self.v[vx] = i as u8;
                                 found = true;
                             }
@@ -304,12 +299,12 @@ impl Cpu {
     }
 
     pub fn key_down(&mut self, key: u8) {
-        log!("key pressed down {:?}", key);
+        // log!("key pressed down {:?}", key);
         self.keyboard.press_key(key);
     }
 
     pub fn key_up(&mut self, key: u8) {
-        log!("key pressed up {:?}", key);
+        // log!("key pressed up {:?}", key);
         self.keyboard.release_key(key);
     }
 
