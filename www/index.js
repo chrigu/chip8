@@ -111,13 +111,13 @@ document.getElementById("tick").addEventListener("click", tick, false);
 
 // render loop
 
-// const renderLoop = () => {
-//     tick();
+const renderLoop = () => {
+    tick();
 
-//     requestAnimationFrame(renderLoop);
-//   };
+    requestAnimationFrame(renderLoop);
+  };
 
-// renderLoop();
+renderLoop();
 
 // keys
 document.addEventListener("keydown", keydown);

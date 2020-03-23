@@ -31,7 +31,7 @@ pub struct Cpu {
     keyboard: Keyboard,
     delay_timer: u8,
     sound_timer: u8,
-    rand: ComplementaryMultiplyWithCarryGen
+    rand: ComplementaryMultiplyWithCarryGen,
 }
 
 #[wasm_bindgen]
@@ -48,7 +48,7 @@ impl Cpu {
             keyboard: Keyboard::new(),
             delay_timer: 0,
             sound_timer: 0,
-            rand: ComplementaryMultiplyWithCarryGen::new(1)
+            rand: ComplementaryMultiplyWithCarryGen::new(1),
         }
     }
 
@@ -58,6 +58,15 @@ impl Cpu {
         self.i = 0;
         self.display.clear_screen();
         self.memory[0x200..].copy_from_slice(rom);
+
+        let fontset = self.display.get_fontset();
+        self.memory[0..fontset.len()].copy_from_slice(fontset);
+        // let mut memory_slice: &[u8] = &self.memory[0..0x200];
+
+        // // https://stackoverflow.com/questions/25225346/how-do-you-copy-between-arrays-of-different-sizes-in-rust
+        // for (memory, chars) in memory_slice.iter_mut().zip(self.display.get_fontset().iter()) {
+        //     *memory = *chars
+        // }
     }
 
     pub fn emulate_cycle(&mut self) {
