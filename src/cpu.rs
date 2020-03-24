@@ -115,6 +115,8 @@ impl Cpu {
             0x6000..=0x6FFF => { // Set vX 
                 let register = (opcode & 0x0F00) >> 8;
                 self.v[register as usize] = opcode_register_value(opcode);
+                log!("set vx: {} with {}", register, opcode_register_value(opcode));
+                
             }
             0x7000..=0x7FFF => { // Add vX 
                 let register = opcode_3rd_octet(opcode) as usize;
@@ -205,6 +207,7 @@ impl Cpu {
                 let vx = opcode_3rd_octet(opcode) as usize;
 
                 self.v[vx] = (random as u16 & (opcode & 0xFF)) as u8;
+                log!("random {}", self.v[vx]);
             }
             0xD000..=0xDFFF => { // Draw sprite
                 let vx = opcode_3rd_octet(opcode) as usize;
@@ -214,7 +217,7 @@ impl Cpu {
                 
                 let sprite_address_end = (sprite_address + sprite_size) as usize;
                 let sprite = &self.memory[sprite_address..sprite_address_end];
-
+                log!("draw address {}", sprite_address);
                 let collision = self.display.draw_sprite_at_position(self.v[vx] as usize, self.v[vy] as usize, &sprite);
 
                 self.v[15] = if collision {
@@ -277,9 +280,29 @@ impl Cpu {
                         self.sound_timer = self.v[vx];
                     }
                     0x1E => { // add i
+                        log!("vx ({}) content {}", vx, self.v[vx] );
                         self.i += self.v[vx] as u16;
                     }
+                    0x33 => { // add i
+                        let hunderds_digit = self.v[vx] / 100;
+                        let tens_digit = (self.v[vx] - hunderds_digit * 100) / 10;
+                        let digit = self.v[vx] - hunderds_digit * 100 - tens_digit * 10;
+                        self.memory[self.i as usize] = hunderds_digit;
+                        self.memory[self.i as usize + 1] = tens_digit;
+                        self.memory[self.i as usize + 2] = digit;
+                    }
+                    0x55 => { // write v to memory
+                        for index in 0..=vx {
+                            self.memory[self.i as usize + index] = self.v[index];
+                        }
+                    }
+                    0x65 => { // read memory to v
+                        for index in 0..=vx {
+                            self.v[index] = self.memory[self.i as usize + index];
+                        }
+                    }
                     _ => {
+                        log!("unkown opcode {:?}", opcode );
                         println!("unkown opcode {:?}", opcode);
                     }
                 }
