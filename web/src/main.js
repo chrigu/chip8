@@ -3,14 +3,18 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import("./wasm.js")
-  .catch(e => console.error("Error importing `wasm.js`:", e));
+import("./chip8.js")
+.then(chip8 => {
 
+  Vue.prototype.$chip8 = chip8;
+  Vue.config.productionTip = false
 
-Vue.config.productionTip = false
+  new Vue({
+    router,
+    store,
+    render: h => h(App)
+  }).$mount('#app')
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+})
+
+  .catch(e => console.error("Error importing `chip8.js`:", e));

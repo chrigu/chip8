@@ -1,7 +1,5 @@
 <template>
-  <div class="chip8">
-    <input type="file" id="rom" name="rom" />
-    <output id="list"></output>
+  <div class="chip8-display">
 
     <button id="tick">Tick</button>
     <button id="pause">Pause</button>
@@ -12,7 +10,10 @@
 
 <script>
 export default {
-  name: 'HelloWorld'
+  name: 'Display',
+  mounted() {
+    this.$chip8.initDisplay('display')
+  }
 }
 </script>
 

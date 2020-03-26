@@ -7,8 +7,6 @@ const displayHeight = 32;
 let animationId = null;
 const pixelSize = 10;
 
-init_panic_hook();
-
 const cpu = Cpu.new();
 const displayPtr = cpu.read_display();
 const display = new Uint8Array(
@@ -17,61 +15,36 @@ const display = new Uint8Array(
   displayHeight * displayWidth
 );
 
-var displayElement = document.getElementsByClassName("display")[0];
-initDisplay();
+init_panic_hook();
 
-function initDisplay() {
-  const dpr = window.devicePixelRatio || 1;
-  // Get the size of the canvas in CSS pixels.
-  const rect = displayElement.getBoundingClientRect();
-  displayElement.width = rect.width * dpr;
-  displayElement.height = rect.height * dpr;
+export function initDisplay(displayId) {
+    let displayElement = document.getElementsByClassName(displayId)[0];
+    const dpr = window.devicePixelRatio || 1;
+    // Get the size of the canvas in CSS pixels.
+    const rect = displayElement.getBoundingClientRect();
+    displayElement.width = rect.width * dpr;
+    displayElement.height = rect.height * dpr;
 
-  const ctx = displayElement.getContext("2d");
-  // Scale all drawing operations by the dpr, so you
-  // don't have to worry about the difference.
-  ctx.scale(dpr, dpr);
+    const ctx = displayElement.getContext("2d");
+    // Scale all drawing operations by the dpr, so you
+    // don't have to worry about the difference.
+    ctx.scale(dpr, dpr);
 }
 
-function handleFileSelect(evt) {
-  var files = evt.target.files; // FileList object
-
-  // files is a FileList of File objects. List some properties.
-  var output = [];
-  for (var i = 0, f; (f = files[i]); i++) {
-    output.push(
-      "<li><strong>",
-      escape(f.name),
-      "</strong> (",
-      f.type || "n/a",
-      ") - ",
-      f.size,
-      " bytes, last modified: ",
-      f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : "n/a",
-      "</li>"
-    );
+export function loadRomFromFile(romFile, reader) {
+  const romData = new Uint8Array(reader.result);
+  for (let i = 0; i < romData.length; i++) {
+    u8Buffer[i] = romData[i];
   }
-  document.getElementById("list").innerHTML =
-    "<ul>" + output.join("") + "</ul>";
 
-  const buffer = new ArrayBuffer(3584);
-  const u8Buffer = new Uint8Array(buffer);
+  cpu.init(u8Buffer);
+  renderLoop();
 
-  var reader = new FileReader();
-  reader.onload = function(theFile) {
-    const romData = new Uint8Array(reader.result);
-    for (let i = 0; i < romData.length; i++) {
-      u8Buffer[i] = romData[i];
-    }
-    console.log(files, theFile, rom, u8Buffer);
-
-    console.log(cpu, display);
-    cpu.init(u8Buffer);
-    renderLoop();
-  };
-
-  reader.readAsArrayBuffer(files[0]);
+  //reader.readAsArrayBuffer(files[0]);
 }
+
+
+
 
 function tick() {
   cpu.emulate_cycle();
@@ -107,11 +80,8 @@ function drawPixel(x, y, set, ctx) {
   ctx.fillRect(x, y, pixelSize, pixelSize);
 }
 
-document
-  .getElementById("rom")
-  .addEventListener("change", handleFileSelect, false);
-document.getElementById("tick").addEventListener("click", tick, false);
-document.getElementById("pause").addEventListener("click", pause, false);
+// document.getElementById("tick").addEventListener("click", tick, false);
+// document.getElementById("pause").addEventListener("click", pause, false);
 
 // render loop
 
@@ -120,7 +90,7 @@ const renderLoop = () => {
   animationId = requestAnimationFrame(renderLoop);
 };
 
-function pause () {
+export function pause () {
   cancelAnimationFrame(animationId);
   animationId = null;
 };
@@ -130,10 +100,10 @@ function isPaused () {
 }
 
 // keys
-document.addEventListener("keydown", keydown);
-document.addEventListener("keyup", keyup);
+// document.addEventListener("keydown", keydown);
+// document.addEventListener("keyup", keyup);
 
-function keydown(e) {
+export function keydown(e) {
   let keyCode = mapKey(e.keyCode);
   if (keyCode > 0) {
     cpu.key_down(keyCode);
@@ -141,7 +111,7 @@ function keydown(e) {
   console.log('down', e.key, keyCode);
 }
 
-function keyup(e) {
+export function keyup(e) {
   let keyCode = mapKey(e.keyCode);
   if (keyCode > 0) {
     cpu.key_up(keyCode);
@@ -193,3 +163,6 @@ function mapKey(keyCode) {
   }
   return chipKeyCode;
 }
+
+
+
