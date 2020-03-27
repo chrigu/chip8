@@ -2,6 +2,7 @@
   <div class="home">
     <RomUploader />
     <Display />
+    <Debug />
   </div>
 </template>
 
@@ -9,12 +10,14 @@
 // @ is an alias to /src
 import Display from '@/components/Display.vue'
 import RomUploader from '@/components/RomUploader.vue'
+import Debug from '@/components/Debug.vue'
 
 export default {
   name: 'Home',
   components: {
     Display,
-    RomUploader
+    RomUploader,
+    Debug
   },
   methods: {
     mapKey(keyCode) {

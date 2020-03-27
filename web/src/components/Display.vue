@@ -1,9 +1,5 @@
 <template>
   <div class="chip8-display">
-
-    <button id="tick">Tick</button>
-    <button id="pause">Pause</button>
-    <pre id="display"></pre>
     <canvas class="display"></canvas>
   </div>
 </template>

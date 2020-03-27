@@ -6,6 +6,9 @@
 </template>
 
 <script>
+
+import { mapActions } from 'vuex'
+
 export default {
   name: 'RomUploader',
   data () {
@@ -14,13 +17,14 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setRom']),
     handleFileSelect(evt) {
       const that = this;
       let files = evt.target.files; // FileList object
 
       // files is a FileList of File objects. List some properties.
-      var output = [];
-      for (var i = 0, f; (f = files[i]); i++) {
+      let output = [];
+      for (let i = 0, f; (f = files[i]); i++) {
         output.push(
           escape(f.name),
           f.type || "n/a",
@@ -32,19 +36,8 @@ export default {
       }
 
       this.romName = output;
-
-      const buffer = new ArrayBuffer(3584);
-      const u8Buffer = new Uint8Array(buffer);
-
-      var reader = new FileReader();
-      reader.onload = function(theFile) {
-        that.$chip8.loadRomFromFile(theFile, reader.result)
-      }
-      reader.readAsArrayBuffer(files[0]);
+      this.setRom(files[0])
     }
-  },
-  mounted() {
-    this.$chip8.initDisplay('display')
   }
 }
 </script>
