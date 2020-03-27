@@ -16,5 +16,4 @@ import("./chip8.js")
   }).$mount('#app')
 
 })
-
-  .catch(e => console.error("Error importing `chip8.js`:", e));
+.catch(e => console.error("Error importing `chip8.js`:", e));

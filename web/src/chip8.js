@@ -54,7 +54,6 @@ function tick() {
     displayPtr,
     displayWidth * displayHeight
   );
-  let text = "";
   // for(let i = 0;i < 32 * 64;i++) {
   // text += disp2[i];
   //     if (i > 0 && i % 64 === 0) {
@@ -80,9 +79,6 @@ function drawPixel(x, y, set, ctx) {
   ctx.fillRect(x, y, pixelSize, pixelSize);
 }
 
-// document.getElementById("tick").addEventListener("click", tick, false);
-// document.getElementById("pause").addEventListener("click", pause, false);
-
 // render loop
 
 const renderLoop = () => {
@@ -100,69 +96,16 @@ function isPaused () {
 }
 
 // keys
-// document.addEventListener("keydown", keydown);
-// document.addEventListener("keyup", keyup);
-
-export function keydown(e) {
-  let keyCode = mapKey(e.keyCode);
-  if (keyCode > 0) {
+export function keydown(keyCode) {
+  if (16 > keyCode > 0) {
     cpu.key_down(keyCode);
   }
-  console.log('down', e.key, keyCode);
+  console.log('down', keyCode);
 }
 
-export function keyup(e) {
-  let keyCode = mapKey(e.keyCode);
-  if (keyCode > 0) {
+export function keyup(keyCode) {
+  if (16 > keyCode > 0) {
     cpu.key_up(keyCode);
   }
-  console.log('up', e.key, keyCode);
+  console.log('up', keyCode);
 }
-
-function mapKey(keyCode) {
-  let chipKeyCode = -1;
-  switch (keyCode) {
-    case 49: // 1
-      chipKeyCode = 1;
-      break;
-    case 50: // 2
-      chipKeyCode = 2;
-      break;
-    case 51: // 3
-      chipKeyCode = 3;
-      break;
-    case 81: // q
-      chipKeyCode = 4;
-      break;
-    case 87: // w
-      chipKeyCode = 5;
-      break;
-    case 69: // e
-      chipKeyCode = 6;
-      break;
-    case 65: // a
-      chipKeyCode = 7;
-      break;
-    case 83: // s
-      chipKeyCode = 8;
-      break;
-    case 68: // d
-      chipKeyCode = 9;
-      break;
-      case 89: // y
-      chipKeyCode = 10;
-      break;
-    case 88: // x
-      chipKeyCode = 11;
-      break;
-    case 67: // c
-      chipKeyCode = 12;
-      break;
-    default:
-      chipKeyCode = -1;
-  }
-  return chipKeyCode;
-}
-
-
-
