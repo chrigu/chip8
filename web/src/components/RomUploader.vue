@@ -15,6 +15,7 @@ export default {
   },
   methods: {
     handleFileSelect(evt) {
+      const that = this;
       let files = evt.target.files; // FileList object
 
       // files is a FileList of File objects. List some properties.
@@ -37,8 +38,9 @@ export default {
 
       var reader = new FileReader();
       reader.onload = function(theFile) {
-        this.$chip8(theFile, reader.result)
+        that.$chip8.loadRomFromFile(theFile, reader.result)
       }
+      reader.readAsArrayBuffer(files[0]);
     }
   },
   mounted() {

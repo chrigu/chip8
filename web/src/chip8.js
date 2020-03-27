@@ -7,6 +7,8 @@ const displayHeight = 32;
 let animationId = null;
 const pixelSize = 10;
 
+let displayElement = null;
+
 const cpu = Cpu.new();
 const displayPtr = cpu.read_display();
 const display = new Uint8Array(
@@ -18,7 +20,7 @@ const display = new Uint8Array(
 init_panic_hook();
 
 export function initDisplay(displayId) {
-    let displayElement = document.getElementsByClassName(displayId)[0];
+    displayElement = document.getElementsByClassName(displayId)[0];
     const dpr = window.devicePixelRatio || 1;
     // Get the size of the canvas in CSS pixels.
     const rect = displayElement.getBoundingClientRect();
@@ -31,16 +33,18 @@ export function initDisplay(displayId) {
     ctx.scale(dpr, dpr);
 }
 
-export function loadRomFromFile(romFile, reader) {
-  const romData = new Uint8Array(reader.result);
+export function loadRomFromFile(romFile, readerResult) {
+  const buffer = new ArrayBuffer(3584); //todo:; get length form chip8
+  const u8Buffer = new Uint8Array(buffer);
+
+  const romData = new Uint8Array(readerResult);
   for (let i = 0; i < romData.length; i++) {
     u8Buffer[i] = romData[i];
   }
-
+  console.log(u8Buffer)
   cpu.init(u8Buffer);
   renderLoop();
 
-  //reader.readAsArrayBuffer(files[0]);
 }
 
 
