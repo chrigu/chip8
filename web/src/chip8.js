@@ -90,6 +90,7 @@ function drawPixel(x, y, set, ctx) {
 // render loop
 
 const renderLoop = () => {
+  // console.log(cpu.read_pc(), 'pc')
   tick();
   animationId = requestAnimationFrame(renderLoop);
 };
