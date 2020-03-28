@@ -24,8 +24,11 @@ export default {
   computed: {
     ...mapGetters(['debugMode', 'rom']),
     hexRom() {
-      console.log(this.rom)
-      return this.rom
+      return Array.from(this.rom)
+        .map(number => number.toString(16))
+        .map((byte, index, array) => index % 2 === 0 ? `${array[index]}${array[index + 1]}` : '')
+        .filter(bytes => bytes !== '' && bytes !== '00')
+        .map(bytes => bytes.length === 3 ? `0${bytes}` : bytes)
     }
   },
   methods: {

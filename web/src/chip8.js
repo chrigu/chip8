@@ -34,21 +34,25 @@ export function initDisplay(displayId) {
 }
 
 export function loadRomFromFile(romFile, readerResult) {
+
+  const u8Buffer = romToU8Array(readerResult)
+
+  console.log(u8Buffer)
+  cpu.init(u8Buffer)
+  renderLoop()
+}
+
+export function romToU8Array(data) {
   const buffer = new ArrayBuffer(3584); //todo:; get length form chip8
   const u8Buffer = new Uint8Array(buffer);
 
-  const romData = new Uint8Array(readerResult);
+  const romData = new Uint8Array(data);
   for (let i = 0; i < romData.length; i++) {
-    u8Buffer[i] = romData[i];
+    u8Buffer[i] = romData[i]
   }
-  console.log(u8Buffer)
-  cpu.init(u8Buffer);
-  renderLoop();
 
+  return u8Buffer;
 }
-
-
-
 
 function tick() {
   cpu.emulate_cycle();

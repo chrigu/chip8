@@ -14,7 +14,7 @@ export default (chip8) => {
         return state.debugMode
       },
       rom: state => {
-        return state.rom
+        return chip8.romToU8Array(state.rom)
       }
     },
     mutations: {
