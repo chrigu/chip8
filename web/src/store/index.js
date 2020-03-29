@@ -23,13 +23,15 @@ export default (chip8) => {
       rom: null,
       debugMode: false,
       paused: false,
-      pc: 0
+      pc: 0,
+      v: []
     },
     getters: {
       debugMode: state => state.debugMode,
       rom: state => chip8.romToU8Array(state.rom),
       isPaused: state => state.paused,
-      pc: state => state.pc
+      pc: state => state.pc,
+      v: state => state.v,
     },
     mutations: {
       setRom(state, rom) {
@@ -43,6 +45,9 @@ export default (chip8) => {
       },
       setPc(state, address) {
         state.pc = address
+      },
+      setV(state, address) {
+        state.v = address
       }
     },
     actions: {
@@ -51,6 +56,7 @@ export default (chip8) => {
         reader.onload = function(theFile) {
           commit('setRom', reader.result);
           chip8.loadRomFromFile(theFile, reader.result)
+          commit('setPause', false)
           renderLoop()
         }
         reader.readAsArrayBuffer(file);
@@ -64,15 +70,20 @@ export default (chip8) => {
       pause({commit}) {
         cancelAnimationFrame(animationId);
         animationId = null;
+        commit('setPc', chip8.pc[0] - 512) // todo: get offset from chip
+        commit('setV', chip8.v)
         commit('setPause', true)
       },
       run({commit}) {
         commit('setPause', false)
         renderLoop()
       },
-      step({commit}) {
+      step({commit, state}) {
         chip8.tick();
-        commit('setPc', chip8.pc[0] - 512) // todo: get offset from chip
+        if (state.debugMode) {
+          commit('setPc', chip8.pc[0] - 512) // todo: get offset from chip
+          commit('setV', chip8.v)
+        }
       }
     }
   })

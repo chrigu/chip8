@@ -6,10 +6,17 @@
       <button v-if="!isPaused" @click="pause">Pause</button>
       <button v-if="isPaused" @click="run">Run</button>
       <button v-if="isPaused" @click="step">Step</button>
-      <div class="debug-panel romdata">
-        <p v-for="(line, i) in hexRom" :key="i" class="romdata__line">
-          <span v-for="(opcode, j) in line" :key="j" :class="{'opcode--current': j + 8 * i === pc}" class="opcode">{{opcode}}</span>
-        </p>
+      <div class="debug-panel">
+        <div class="romdata">
+          <p v-for="(line, i) in hexRom" :key="i" class="romdata__line">
+            <span v-for="(opcode, j) in line" :key="j" :class="{'opcode--current': j + 8 * i === pc}" class="opcode">{{opcode}}</span>
+          </p>
+        </div>
+        <ul class="v-registers">
+          <div v-for="(register, j) in v" :key="j">
+            v: {{j}}: {{register.toString(16)}}
+          </div>
+        </ul>
       </div>
     </div>
   </div>
@@ -27,7 +34,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['debugMode', 'rom', 'pc', 'isPaused']),
+    ...mapGetters(['debugMode', 'rom', 'pc', 'isPaused', 'v']),
     hexRom() {
       return Array.from(this.rom)
         .map(number => number.toString(16))

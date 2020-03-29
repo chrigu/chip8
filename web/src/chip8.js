@@ -1,7 +1,7 @@
 import { memory } from "chip8/chip8_bg";
 import { Cpu, init_panic_hook } from "chip8";
 
-const displayWidth = 64;
+const displayWidth = 64; // todo: get from chip8
 const displayHeight = 32;
 
 let animationId = null;
@@ -21,6 +21,12 @@ export const pc = new Uint16Array(
   memory.buffer,
   cpu.pc_reference(),
   1
+)
+
+export const v = new Uint8Array(
+  memory.buffer,
+  cpu.v_reference(),
+  16
 )
 
 init_panic_hook();
@@ -62,17 +68,7 @@ export function romToU8Array(data) {
 
 export function tick() {
   cpu.emulate_cycle();
-  //console.log(cpu.read_pc());
-
-  // for(let i = 0;i < 32 * 64;i++) {
-  // text += disp2[i];
-  //     if (i > 0 && i % 64 === 0) {
-  //         text += '\n';
-  //     }
-  // }
   render(display);
-
-  //document.getElementById('display').innerHTML = text;
 }
 
 function render(pixels) {

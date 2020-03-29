@@ -321,6 +321,10 @@ impl Cpu {
         &self.pc
     }
 
+    pub fn v_reference(&mut self) -> *const [u8; 16] {
+        &self.v
+    }
+
     pub fn key_down(&mut self, key: u8) {
         // log!("key pressed down {:?}", key);
         self.keyboard.press_key(key);
