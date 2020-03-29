@@ -5,11 +5,11 @@ Vue.use(Vuex)
 
 let animationId = null;
 
-const renderLoopFactory = (chip8) => {
+const renderLoopFactory = (chip8, callback) => {
   const renderLoop = () => {
-    // console.log(cpu.read_pc(), 'pc')
     chip8.tick();
     animationId = requestAnimationFrame(renderLoop);
+    callback()
   };
 
   return renderLoop
@@ -18,9 +18,7 @@ const renderLoopFactory = (chip8) => {
 
 export default (chip8) => {
 
-  const renderLoop = renderLoopFactory(chip8);
-
-  return new Vuex.Store({
+  const store = new Vuex.Store({
     state: {
       rom: null,
       debugMode: false,
@@ -30,7 +28,7 @@ export default (chip8) => {
     getters: {
       debugMode: state => state.debugMode,
       rom: state => chip8.romToU8Array(state.rom),
-      isPaused: state => state.isPaused,
+      isPaused: state => state.paused,
       pc: state => state.pc
     },
     mutations: {
@@ -68,11 +66,21 @@ export default (chip8) => {
         animationId = null;
         commit('setPause', true)
       },
+      run({commit}) {
+        commit('setPause', false)
+        renderLoop()
+      },
       step({commit}) {
         chip8.tick();
-        console.log(chip8.pc[0])
         commit('setPc', chip8.pc[0] - 512) // todo: get offset from chip
       }
     }
   })
+
+  const tickWrapper = () => {
+    store.dispatch('step')
+  }
+
+  const renderLoop = renderLoopFactory(chip8, tickWrapper);
+  return store
 }

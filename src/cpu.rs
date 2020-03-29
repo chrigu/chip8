@@ -67,7 +67,7 @@ impl Cpu {
         let opcode = read_word(self.memory, self.pc);
         self.pc += 2;
 
-        log!("opcode: {:x?}", opcode);
+        //log!("opcode: {:x?}", opcode);
         self.handle_opcode(opcode);
     }
 
