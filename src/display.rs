@@ -71,7 +71,7 @@ impl Display {
         collision
     }
 
-    pub fn read_display(&mut self) -> *const [bool; NUM_PIXELS] {
+    pub fn memory_reference(&mut self) -> *const [bool; NUM_PIXELS] {
         // todo return ref somehow
         &self.memory
     }

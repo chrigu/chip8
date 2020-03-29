@@ -10,12 +10,18 @@ const pixelSize = 10;
 let displayElement = null;
 
 const cpu = Cpu.new();
-const displayPtr = cpu.read_display();
+const displayPtr = cpu.display_reference();
 const display = new Uint8Array(
   memory.buffer,
   displayPtr,
   displayHeight * displayWidth
 );
+
+export const pc = new Uint16Array(
+  memory.buffer,
+  cpu.pc_reference(),
+  1
+)
 
 init_panic_hook();
 
@@ -39,7 +45,7 @@ export function loadRomFromFile(romFile, readerResult) {
 
   console.log(u8Buffer)
   cpu.init(u8Buffer)
-  renderLoop()
+  //renderLoop()
 }
 
 export function romToU8Array(data) {
@@ -54,21 +60,17 @@ export function romToU8Array(data) {
   return u8Buffer;
 }
 
-function tick() {
+export function tick() {
   cpu.emulate_cycle();
   //console.log(cpu.read_pc());
-  const disp2 = new Uint8Array(
-    memory.buffer,
-    displayPtr,
-    displayWidth * displayHeight
-  );
+
   // for(let i = 0;i < 32 * 64;i++) {
   // text += disp2[i];
   //     if (i > 0 && i % 64 === 0) {
   //         text += '\n';
   //     }
   // }
-  render(disp2);
+  render(display);
 
   //document.getElementById('display').innerHTML = text;
 }

@@ -313,12 +313,12 @@ impl Cpu {
         }
     }
 
-    pub fn read_display(&mut self) -> *const [bool; NUM_PIXELS] {
-        self.display.read_display()
+    pub fn display_reference(&mut self) -> *const [bool; NUM_PIXELS] {
+        self.display.memory_reference()
     }
 
-    pub fn read_pc(&mut self) -> u16 {
-        self.pc
+    pub fn pc_reference(&mut self) -> *const u16 {
+        &self.pc
     }
 
     pub fn key_down(&mut self, key: u8) {
