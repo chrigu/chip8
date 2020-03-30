@@ -64,10 +64,15 @@ impl Cpu {
     }
 
     pub fn emulate_cycle(&mut self) {
+
+        if self.delay_timer > 0 {
+            self.delay_timer -=1;
+        }
+
         let opcode = read_word(self.memory, self.pc);
         self.pc += 2;
 
-        //log!("opcode: {:x?}", opcode);
+        // log!("opcode: {:x?} {}", opcode, self.pc -512);
         self.handle_opcode(opcode);
     }
 
@@ -217,7 +222,7 @@ impl Cpu {
                 
                 let sprite_address_end = (sprite_address + sprite_size) as usize;
                 let sprite = &self.memory[sprite_address..sprite_address_end];
-                log!("draw address {}", sprite_address);
+
                 let collision = self.display.draw_sprite_at_position(self.v[vx] as usize, self.v[vy] as usize, &sprite);
 
                 self.v[15] = if collision {

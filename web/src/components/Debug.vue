@@ -9,7 +9,7 @@
       <div class="debug-panel">
         <div class="romdata">
           <p v-for="(line, i) in hexRom" :key="i" class="romdata__line">
-            <span v-for="(opcode, j) in line" :key="j" :class="{'opcode--current': j + 8 * i === pc}" class="opcode">{{opcode}}</span>
+            <span v-for="(opcode, j) in line" :key="j" :class="{'opcode--current': j + 8 * i === pc / 2}" class="opcode">{{opcode}}</span>
           </p>
         </div>
         <ul class="v-registers">

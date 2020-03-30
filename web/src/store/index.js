@@ -16,11 +16,15 @@ const renderLoopFactory = (chip8, callback) => {
 }
 
 function initDebugMode(commit, chip8) {
-  commit('setPc', chip8.pc[0] - 512) // todo: get offset from chip
+
+  const relativePc = chip8.pc[0] - 512
+  const pc = relativePc === 0 ? 0 : relativePc - 2
+
+  commit('setPc', pc) // todo: get offset from chip
   commit('setV', chip8.v)
   commit('setStack', chip8.stack)
-  commit('setSp', chip8.sp)
-  commit('setI', chip8.i)
+  commit('setSp', chip8.sp[0])
+  commit('setI', chip8.i[0])
 }
 
 
@@ -57,20 +61,20 @@ export default (chip8) => {
       setPause(state, paused) {
         state.paused = paused
       },
-      setPc(state, address) {
-        state.pc = address
+      setPc(state, pc) {
+        state.pc = pc
       },
-      setV(state, address) {
-        state.v = address
+      setV(state, v) {
+        state.v = v
       },
-      setStack(state, address) {
-        state.stack = address
+      setStack(state, stack) {
+        state.stack = stack
       },
-      setSp(state, address) {
-        state.sp = address
+      setSp(state, sp) {
+        state.sp = sp
       },
-      setI(state, address) {
-        state.i = address
+      setI(state, i) {
+        state.i = i
       }
     },
     actions: {
