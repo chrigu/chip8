@@ -17,6 +17,20 @@
             v: {{j}}: {{register.toString(16)}}
           </div>
         </ul>
+        <div class="pc">
+          pc: {{pc}}
+        </div>
+        <ul class="stack">
+          <div v-for="(stack, j) in v" :key="j">
+            stack: {{j}}: {{stack.toString(16)}}
+          </div>
+        </ul>
+        <div class="i">
+          i: {{i}}
+        </div>
+        <div class="sp">
+          sp: {{sp}}
+        </div>
       </div>
     </div>
   </div>
@@ -34,7 +48,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['debugMode', 'rom', 'pc', 'isPaused', 'v']),
+    ...mapGetters(['debugMode', 'rom', 'pc', 'isPaused', 'v', 'stack', 'i', 'sp']),
     hexRom() {
       return Array.from(this.rom)
         .map(number => number.toString(16))

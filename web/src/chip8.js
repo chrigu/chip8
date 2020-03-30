@@ -23,9 +23,27 @@ export const pc = new Uint16Array(
   1
 )
 
+export const sp = new Uint8Array(
+  memory.buffer,
+  cpu.sp_reference(),
+  1
+)
+
+export const i = new Uint16Array(
+  memory.buffer,
+  cpu.i_reference(),
+  1
+)
+
 export const v = new Uint8Array(
   memory.buffer,
   cpu.v_reference(),
+  16
+)
+
+export const stack = new Uint16Array(
+  memory.buffer,
+  cpu.stack_reference(),
   16
 )
 

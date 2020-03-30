@@ -15,6 +15,14 @@ const renderLoopFactory = (chip8, callback) => {
   return renderLoop
 }
 
+function initDebugMode(commit, chip8) {
+  commit('setPc', chip8.pc[0] - 512) // todo: get offset from chip
+  commit('setV', chip8.v)
+  commit('setStack', chip8.stack)
+  commit('setSp', chip8.sp)
+  commit('setI', chip8.i)
+}
+
 
 export default (chip8) => {
 
@@ -24,7 +32,10 @@ export default (chip8) => {
       debugMode: false,
       paused: false,
       pc: 0,
-      v: []
+      v: [],
+      stack: [],
+      sp: 0,
+      i: 0
     },
     getters: {
       debugMode: state => state.debugMode,
@@ -32,6 +43,9 @@ export default (chip8) => {
       isPaused: state => state.paused,
       pc: state => state.pc,
       v: state => state.v,
+      stack: state => state.stack,
+      sp: state => state.sp,
+      i: state => state.i,
     },
     mutations: {
       setRom(state, rom) {
@@ -48,6 +62,15 @@ export default (chip8) => {
       },
       setV(state, address) {
         state.v = address
+      },
+      setStack(state, address) {
+        state.stack = address
+      },
+      setSp(state, address) {
+        state.sp = address
+      },
+      setI(state, address) {
+        state.i = address
       }
     },
     actions: {
@@ -70,8 +93,7 @@ export default (chip8) => {
       pause({commit}) {
         cancelAnimationFrame(animationId);
         animationId = null;
-        commit('setPc', chip8.pc[0] - 512) // todo: get offset from chip
-        commit('setV', chip8.v)
+        initDebugMode(commit, chip8)
         commit('setPause', true)
       },
       run({commit}) {
@@ -81,8 +103,7 @@ export default (chip8) => {
       step({commit, state}) {
         chip8.tick();
         if (state.debugMode) {
-          commit('setPc', chip8.pc[0] - 512) // todo: get offset from chip
-          commit('setV', chip8.v)
+          initDebugMode(commit, chip8)
         }
       }
     }

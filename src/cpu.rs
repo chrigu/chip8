@@ -321,8 +321,20 @@ impl Cpu {
         &self.pc
     }
 
+    pub fn sp_reference(&mut self) -> *const u8 {
+        &self.sp
+    }
+
+    pub fn i_reference(&mut self) -> *const u16 {
+        &self.i
+    }
+
     pub fn v_reference(&mut self) -> *const [u8; 16] {
         &self.v
+    }
+
+    pub fn stack_reference(&mut self) -> *const [u16; 16] {
+        &self.stack
     }
 
     pub fn key_down(&mut self, key: u8) {
