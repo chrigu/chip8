@@ -63,7 +63,11 @@ export default {
           previous[lastIndex] = [...previous[lastIndex], current]
           return previous
         }, [])
-
+    },
+    heyPc() {
+      if (this.pc.toString().length > 1) {
+        return `0x`
+      }
     }
   },
   methods: {
