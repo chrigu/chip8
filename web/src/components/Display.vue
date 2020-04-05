@@ -18,6 +18,6 @@ export default {
 .display {
     width: 640px;
     height: 320px;
-    background-color: black;
+    background-color: #222222;
 }
 </style>

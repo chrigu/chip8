@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="app">
+  <div  class="app">
     <h1>Chip8 Emulator</h1>
     <router-view/>
   </div>

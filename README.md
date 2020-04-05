@@ -8,7 +8,13 @@ A very basic Chip8 Emulator written in Rust. The emulator is embedded in a webpa
 
 ### Rust & Webassembly
 
-Todo: Get cargo
+Install wasm-pack from https://rustwasm.github.io/wasm-pack/installer/
+
+Install dependencies:
+
+```
+cargo build
+```
 
 Compile code and generate WASM code
 
@@ -61,3 +67,9 @@ https://github.com/learnopengles/chip8-rust
 Opcode
 
 https://github.com/trapexit/chip-8_documentation
+
+https://rustwasm.github.io/book/
+
+## Todo
+
+- Add global scss styles

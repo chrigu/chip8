@@ -90,14 +90,14 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
   .dropbox {
-    outline: 2px dashed grey; /* the dash box */
+    outline: 2px dashed rgb(76, 179, 91); /* the dash box */
     outline-offset: -10px;
-    background: lightcyan;
-    color: dimgray;
+    color: rgb(76, 179, 91);
     padding: 10px 10px;
     min-height: 200px; /* minimum height */
     position: relative;
     cursor: pointer;
+    background-image: url(/floppy.svg);
   }
 
   .input-file {
