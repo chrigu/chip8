@@ -1,17 +1,17 @@
 <template>
-  <div id="app">
+  <div id="app" class="app">
     <h1>Chip8 Emulator</h1>
     <router-view/>
   </div>
 </template>
 
 <style lang="scss">
-#app {
+.app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: rgb(76, 179, 91);
 }
 
 </style>

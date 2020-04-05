@@ -1,27 +1,25 @@
 <template>
   <div class="rom-uploader">
-    <div class="container">
-      <!--UPLOAD-->
-      <form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
-        <h1>Upload images</h1>
-        <div class="dropbox">
-          <input type="file" name="rom" :disabled="isSaving" @change="filesChange($event.target.files)"
-             class="input-file">
-            <p v-if="isInitial">
-              Drag your file(s) here to begin<br> or click to browse
-            </p>
-            <p v-if="isSaving">
-              Uploading {{ fileCount }} files...
-            </p>
-        </div>
-      </form>
-      <!--SUCCESS-->
-      <div v-if="isSuccess">
-        <p>
-          <a href="javascript:void(0)" @click="reset()">Upload again</a>
-        </p>
-        <output id="list">{{romName}}</output>
+    <!--UPLOAD-->
+    <form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
+      <h1>Upload images</h1>
+      <div class="dropbox">
+        <input type="file" name="rom" :disabled="isSaving" @change="filesChange($event.target.files)"
+            class="input-file">
+          <p v-if="isInitial">
+            Drag your file(s) here to begin<br> or click to browse
+          </p>
+          <p v-if="isSaving">
+            Uploading {{ fileCount }} files...
+          </p>
       </div>
+    </form>
+    <!--SUCCESS-->
+    <div v-if="isSuccess">
+      <p>
+        <a href="javascript:void(0)" @click="reset()">Upload again</a>
+      </p>
+      <output id="list">{{romName}}</output>
     </div>
   </div>
 </template>
@@ -57,9 +55,7 @@ export default {
   methods: {
     ...mapActions(['setRom']),
     filesChange(fileList) {
-      console.log(fileList)
       const that = this;
-      // let files = evt.target.files; // FileList object
 
       // files is a FileList of File objects. List some properties.
       let output = [];
