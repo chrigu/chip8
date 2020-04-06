@@ -1,6 +1,17 @@
 <template>
   <div class="rom-selection">
     <div class="rom-list">
+      <div class="select">
+  <select>
+    <option>Airplane</option>
+    <option>Breakout</option>
+    <option>Chip8</option>
+    <option>Guess</option>
+    <option>IBM Logo</option>
+    <option>Landing</option>
+    <option>Maze</option>
+  </select>
+</div>
     </div>
     <RomUploader />
   </div>
