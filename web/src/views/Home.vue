@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <RomUploader />
+    <RomSelection />
     <Display />
     <Debug />
   </div>
@@ -9,14 +9,14 @@
 <script>
 // @ is an alias to /src
 import Display from '@/components/Display.vue'
-import RomUploader from '@/components/RomUploader.vue'
+import RomSelection from '@/components/RomSelection.vue'
 import Debug from '@/components/Debug.vue'
 
 export default {
   name: 'Home',
   components: {
     Display,
-    RomUploader,
+    RomSelection,
     Debug
   },
   methods: {
@@ -83,3 +83,4 @@ export default {
   }
 }
 </script>
+
