@@ -1,6 +1,5 @@
 <template>
   <div class="debug">
-    <button @click="toggleDebugMode">Debug mode</button>
     <div v-if="debugMode" class="debug__panel debug-panel">
       <h1>Debug me</h1>
       <button v-if="!isPaused" @click="pause">Pause</button>
@@ -71,10 +70,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['debugModeOn', 'debugModeOff', 'pause', 'step', 'run']),
-    toggleDebugMode() {
-      this.debugMode ? this.debugModeOff() : this.debugModeOn();
-    }
+    ...mapActions(['pause', 'step', 'run']),
   }
 }
 </script>
@@ -93,11 +89,8 @@ export default {
  }
 
  .romdata {
-
-   padding-left: 5rem;
    text-align: left;
    background-color: #111111;
    color: rgb(76, 179, 91);
-
  }
 </style>

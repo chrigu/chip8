@@ -1,8 +1,15 @@
 <template>
   <div class="home">
-    <RomSelection />
-    <Display />
-    <Debug />
+    <button @click="toggleDebugMode">Debug mode</button>
+    <div class="columns">
+      <div class="column is-full" :class="{'is-two-thirds': debugMode}">
+        <RomSelection />
+        <Display />
+      </div>
+      <div class="column" :class="{'is-one-thirds': debugMode}">
+        <Debug />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -12,6 +19,8 @@ import Display from '@/components/Display.vue'
 import RomSelection from '@/components/RomSelection.vue'
 import Debug from '@/components/Debug.vue'
 
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'Home',
   components: {
@@ -19,7 +28,14 @@ export default {
     RomSelection,
     Debug
   },
+  computed: {
+  ...mapGetters(['debugMode']),
+  },
   methods: {
+    ...mapActions(['debugModeOn', 'debugModeOff']),
+    toggleDebugMode() {
+      this.debugMode ? this.debugModeOff() : this.debugModeOn(); // move to store
+    },
     mapKey(keyCode) {
       let chipKeyCode = -1;
       switch (keyCode) {
