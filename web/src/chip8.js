@@ -99,7 +99,7 @@ function render(pixels) {
 }
 
 function drawPixel(x, y, set, ctx) {
-  ctx.fillStyle = set ? "rgb(76, 179, 91)" : "rgb(0, 0, 0)";
+  ctx.fillStyle = set ? "rgb(76, 179, 91)" : "rgb(30, 30, 30)";
   ctx.fillRect(x, y, pixelSize, pixelSize);
 }
 

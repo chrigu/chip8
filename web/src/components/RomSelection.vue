@@ -7,7 +7,7 @@
         </select>
       </div>
     </div>
-    <RomUploader />
+    <RomUploader v-if="showUploader" />
   </div>
 </template>
 
@@ -22,6 +22,7 @@ export default {
   },
   data () {
     return {
+      showUploader: false,
       roms: [
         {
           'name': 'Airplane',
@@ -60,8 +61,8 @@ export default {
           'file': 'Trip8_Demo.ch8'
         },
         {
-          'name': 'Worm',
-          'file': 'Worm.ch8'
+          'name': 'Tron',
+          'file': 'Tron.ch8'
         },
       ],
       selectedRom: 'Chip8_Picture.ch8'
@@ -69,12 +70,15 @@ export default {
   },
   methods: {
     ...mapActions(['setRom']),
-    romSelected(other) {
+    romSelected() {
       const url = `/roms/${this.selectedRom}`;
       fetch(url)
       .then(data => data.blob())
       .then(data => this.setRom(data))
     }
+  },
+  mounted() {
+    this.romSelected()
   }
 }
 </script>
