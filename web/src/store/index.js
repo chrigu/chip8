@@ -4,18 +4,21 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 let animationId = null;
+let paused = false;
 
 const renderLoopFactory = (chip8, callback) => {
   const renderLoop = () => {
-    chip8.tick();
-    animationId = requestAnimationFrame(renderLoop);
-    callback()
+    if (!paused) {
+      chip8.tick();
+      animationId = requestAnimationFrame(renderLoop);
+      callback()
+    }
   };
 
   return renderLoop
 }
 
-function initDebugMode(commit, chip8) {
+function commitChip8Internals(commit, chip8) {
 
   const relativePc = chip8.pc[0] - 512
   const pc = relativePc === 0 ? 0 : relativePc - 2
@@ -83,7 +86,8 @@ export default (chip8) => {
         reader.onload = function(theFile) {
           commit('setRom', reader.result);
           chip8.loadRomFromFile(theFile, reader.result)
-          commit('setPause', false)
+          paused = false
+          commit('setPause', paused)
           renderLoop()
         }
         reader.readAsArrayBuffer(file);
@@ -95,19 +99,20 @@ export default (chip8) => {
         commit('setDebugMode', false)
       },
       pause({commit}) {
-        cancelAnimationFrame(animationId);
+        paused = true
+        commit('setPause', paused)
         animationId = null;
-        initDebugMode(commit, chip8)
-        commit('setPause', true)
+        commitChip8Internals(commit, chip8)
       },
       run({commit}) {
-        commit('setPause', false)
+        paused = false
+        commit('setPause', paused)
         renderLoop()
       },
       step({commit, state}) {
         chip8.tick();
         if (state.debugMode) {
-          initDebugMode(commit, chip8)
+          commitChip8Internals(commit, chip8)
         }
       }
     }

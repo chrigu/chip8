@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <button @click="toggleDebugMode">Debug mode</button>
+    <button class="debug-button" @click="toggleDebugMode">Debug mode</button>
     <div class="columns">
       <div class="column is-full" :class="{'is-two-thirds': debugMode}">
         <RomSelection />
@@ -100,3 +100,9 @@ export default {
 }
 </script>
 
+<style lang="scss">
+.debug-button {
+  margin-bottom: 1em;
+}
+
+</style>
