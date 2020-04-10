@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import mapKey from '../keyboard.js'
 
 Vue.use(Vuex)
 
@@ -113,6 +114,18 @@ export default (chip8) => {
         chip8.tick();
         if (state.debugMode) {
           commitChip8Internals(commit, chip8)
+        }
+      },
+      keydown(store, keyCode) {
+        let chip8Key = mapKey(keyCode);
+        if (chip8Key > 0) {
+          chip8.keydown(chip8Key)
+        }
+      },
+      keyup(store, keyCode) {
+        let chip8Key = mapKey(keyCode);
+        if (chip8Key > 0) {
+          chip8.keyup(chip8Key)
         }
       }
     }
