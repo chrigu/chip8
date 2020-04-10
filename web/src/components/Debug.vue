@@ -1,7 +1,7 @@
 <template>
   <div class="debug">
-    <div v-if="debugMode" class="debug__panel debug-panel">
-      <h1>Debug me</h1>
+    <div class="debug__panel debug-panel">
+      <h1>Debugger</h1>
       <button v-if="!isPaused" @click="pause">Pause</button>
       <button v-if="isPaused" @click="run">Run</button>
       <button v-if="isPaused" @click="step">Step</button>
@@ -12,6 +12,7 @@
           </p>
         </div>
         <ul class="v-registers">
+          <h2>V-Registers</h2>
           <div v-for="(register, j) in v" :key="j">
             v: {{j}}: {{register.toString(16)}}
           </div>
@@ -47,7 +48,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['debugMode', 'rom', 'pc', 'isPaused', 'v', 'stack', 'i', 'sp']),
+    ...mapGetters(['rom', 'pc', 'isPaused', 'v', 'stack', 'i', 'sp']),
     hexRom() {
       return Array.from(this.rom)
         .map(number => number.toString(16))
@@ -84,13 +85,13 @@ export default {
 
    &--current {
      background-color: rgb(76, 179, 91);
-     color: #111111;
+     color: #222222;
    }
  }
 
  .romdata {
    text-align: left;
-   background-color: #111111;
+   background-color: #222222;
    color: rgb(76, 179, 91);
  }
 </style>

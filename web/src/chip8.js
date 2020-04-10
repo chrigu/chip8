@@ -63,13 +63,9 @@ export function initDisplay(displayId) {
     ctx.scale(dpr, dpr);
 }
 
-export function loadRomFromFile(romFile, readerResult) {
-
+export function loadRomFromFile(readerResult) {
   const u8Buffer = romToU8Array(readerResult)
-
-  console.log(u8Buffer)
   cpu.init(u8Buffer)
-  //renderLoop()
 }
 
 export function romToU8Array(data) {

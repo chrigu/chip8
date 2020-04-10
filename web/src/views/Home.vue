@@ -2,14 +2,15 @@
   <div class="home">
     <button class="debug-button" @click="toggleDebugMode">Debug mode</button>
     <div class="columns">
-      <div class="column is-full" :class="{'is-two-thirds': debugMode}">
+      <div class="home__main column is-full" :class="{'is-two-thirds': debugMode}">
         <RomSelection />
         <Display />
       </div>
-      <div class="column" :class="{'is-one-thirds': debugMode}">
+      <div class="home__debug column" :class="{'is-one-thirds': debugMode}">
         <Debug />
       </div>
     </div>
+    <Keyboard />
   </div>
 </template>
 
@@ -18,6 +19,7 @@
 import Display from '@/components/Display.vue'
 import RomSelection from '@/components/RomSelection.vue'
 import Debug from '@/components/Debug.vue'
+import Keyboard from '@/components/Keyboard.vue'
 
 import { mapActions, mapGetters } from 'vuex'
 
@@ -26,7 +28,8 @@ export default {
   components: {
     Display,
     RomSelection,
-    Debug
+    Debug,
+    Keyboard
   },
   computed: {
   ...mapGetters(['debugMode']),
@@ -103,6 +106,12 @@ export default {
 <style lang="scss">
 .debug-button {
   margin-bottom: 1em;
+}
+
+.home {
+  &__main, &__debug {
+    transition: width 0.5s ease-in-out;;
+  }
 }
 
 </style>

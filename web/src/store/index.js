@@ -85,7 +85,7 @@ export default (chip8) => {
         const reader = new FileReader();
         reader.onload = function(theFile) {
           commit('setRom', reader.result);
-          chip8.loadRomFromFile(theFile, reader.result)
+          chip8.loadRomFromFile(reader.result)
           paused = false
           commit('setPause', paused)
           renderLoop()

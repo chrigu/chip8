@@ -1,13 +1,14 @@
 <template>
   <div class="rom-selection">
-    <div class="rom-list">
-      <div class="select">
+      <div class="rom-selection__select select">
         <select v-model="selectedRom" @change="romSelected">
           <option v-for="rom in roms" :key="rom.name" :value="rom.file">{{rom.name}}</option>
         </select>
       </div>
-    </div>
-    <RomUploader v-if="showUploader" />
+      <p class="rom-selection__text">or upload own ROM</p>
+      <div class="rom-selection__upload">
+        <RomUploader />
+      </div>
   </div>
 </template>
 
@@ -22,7 +23,6 @@ export default {
   },
   data () {
     return {
-      showUploader: false,
       roms: [
         {
           'name': 'Airplane',
@@ -85,5 +85,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+
+.rom-selection {
+  display: flex;
+  flex-direction: row;
+}
 
 </style>
