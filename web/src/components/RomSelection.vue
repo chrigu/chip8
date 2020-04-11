@@ -5,7 +5,7 @@
           <option v-for="rom in roms" :key="rom.name" :value="rom.file">{{rom.name}}</option>
         </select>
       </div>
-      <p class="rom-selection__text">or upload own ROM</p>
+      <!--p class="rom-selection__text">or upload own ROM</p-->
       <div class="rom-selection__upload">
         <RomUploader />
       </div>

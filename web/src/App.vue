@@ -1,7 +1,7 @@
 <template>
   <div  class="app">
     <header>
-      <h1>Chip8 Emulator</h1>
+      <h1 class="app__title">Chip8 Emulator</h1>
     </header>
     <section class="emulator">
       <router-view/>
@@ -18,7 +18,7 @@
 
 <style lang="scss">
 .app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'vt323', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -26,6 +26,11 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
+  &__title {
+    font-family: 'bitwise', Helvetica, Arial, sans-serif;
+    font-size: 32px;
+  }
 }
 
 .emulator {

@@ -51,6 +51,8 @@ export default {
     width: 45px;
     height: 45px;
     margin-right: 11px;
+    font-family: 'vt323', Helvetica, Arial, sans-serif;
+    font-size: 24px;
 
     &:active {
       background-color: rgb(76, 179, 91);
