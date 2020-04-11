@@ -43,14 +43,11 @@ export default {
   mounted: function() {
     const that = this;
     window.addEventListener('keyup', function(event) {
-      console.log('keyup')
-      that.keyup(event.keyCode)
+      that.keyup(event.key)
     });
 
     window.addEventListener('keydown', function(event) {
-            console.log('down')
-
-      that.keydown(event.keyCode)
+      that.keydown(event.key)
     });
   }
 }

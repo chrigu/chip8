@@ -1,7 +1,7 @@
 <template>
   <div class="keyboard">
     <div v-for="(row, i) in keys" :key="i" class="keyboard__row row">
-      <button v-for="key in row" :key="key" class="keyboard__key">{{key}}</button>
+      <button v-for="key in row" :key="key" class="keyboard__key" @click="keyPressed(key)">{{key}}</button>
     </div>
   </div>
 </template>
@@ -25,12 +25,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setRom']),
-    romSelected() {
-      const url = `/roms/${this.selectedRom}`;
-      fetch(url)
-      .then(data => data.blob())
-      .then(data => this.setRom(data))
+    ...mapActions(['keydown', 'keyup']),
+    keyPressed(key) {
+      this.keydown(key)
+      setTimeout(() => this.keyup(key), 100) //simulate key press
     }
   }
 }
