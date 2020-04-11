@@ -75,3 +75,4 @@ https://github.com/dmatlack/chip8/tree/master/roms
 ## Todo
 
 - Add global scss styles
+- Move all chip8 dependencies to store

@@ -1,7 +1,11 @@
 <template>
   <div class="keyboard">
     <div v-for="(row, i) in keys" :key="i" class="keyboard__row row">
-      <button v-for="key in row" :key="key" class="keyboard__key" @click="keyPressed(key)">{{key}}</button>
+      <button
+        v-for="key in row"
+        :key="key"
+        class="keyboard__key button"
+        @click="keyPressed(key)">{{key}}</button>
     </div>
   </div>
 </template>
@@ -36,5 +40,22 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+.keyboard {
+  &__row {
+    margin-bottom: 22px;
+  }
+  &__key {
+    background-color: #222222;
+    color: rgb(76, 179, 91);
+    border-color: rgb(76, 179, 91);
+    width: 45px;
+    height: 45px;
+    margin-right: 11px;
 
+    &:active {
+      background-color: rgb(76, 179, 91);
+      color: #222222;
+    }
+  }
+}
 </style>
