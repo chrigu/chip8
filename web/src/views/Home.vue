@@ -1,16 +1,18 @@
 <template>
   <div class="home">
-    <button class="debug-button" @click="toggleDebugMode">Debug mode</button>
     <div class="columns">
-      <div class="home__main column is-full" :class="{'is-two-thirds': debugMode}">
-        <RomSelection />
-        <Display />
+      <div class="home__main main column is-full" :class="{'is-three-fifths': debugMode}">
+        <div class="main__actions actions">
+          <RomSelection class="actions__rom" />
+          <button class="button" @click="toggleDebugMode" :class="{'is-warning': debugMode, 'is-success': !debugMode}">{{debugButtonText}}</button>
+        </div>
+        <Display class="main__display" />
+        <Keyboard />
       </div>
-      <div class="home__debug column" :class="{'is-one-thirds': debugMode}">
+      <div class="home__debug column" :class="{'home__debug__visible': debugMode}">
         <Debug />
       </div>
     </div>
-    <Keyboard />
   </div>
 </template>
 
@@ -33,6 +35,9 @@ export default {
   },
   computed: {
   ...mapGetters(['debugMode']),
+  debugButtonText() {
+    return this.debugMode ? 'Debug mode off' : 'Debug mode on'
+  }
   },
   methods: {
     ...mapActions(['debugModeOn', 'debugModeOff', 'keydown', 'keyup']),
@@ -61,6 +66,29 @@ export default {
 .home {
   &__main, &__debug {
     transition: width 0.5s ease-in-out;;
+  }
+
+  &__debug {
+    &--visible {
+      width: 100%;
+    }
+  }
+}
+
+.main {
+  &__actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__display {
+    margin-bottom: 2rem;
+  }
+}
+
+.actions {
+  &__rom {
+    margin-right: 1rem !important;
   }
 }
 

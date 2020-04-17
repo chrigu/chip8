@@ -30,6 +30,7 @@
   &__title {
     font-family: 'bitwise', Helvetica, Arial, sans-serif;
     font-size: 32px;
+    margin-bottom: 2rem;
   }
 }
 

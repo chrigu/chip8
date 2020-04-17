@@ -6,9 +6,9 @@
         </select>
       </div>
       <!--p class="rom-selection__text">or upload own ROM</p-->
-      <div class="rom-selection__upload">
+      <!--div class="rom-selection__upload">
         <RomUploader />
-      </div>
+      </div-->
   </div>
 </template>
 
@@ -89,6 +89,11 @@ export default {
 .rom-selection {
   display: flex;
   flex-direction: row;
+  margin: 0 0 2rem;
+
+  &__select {
+    margin: 0 auto;
+  }
 }
 
 </style>

@@ -53,6 +53,7 @@ export default {
     margin-right: 11px;
     font-family: 'vt323', Helvetica, Arial, sans-serif;
     font-size: 24px;
+    line-height: 1rem;;
 
     &:active {
       background-color: rgb(76, 179, 91);

@@ -2,33 +2,34 @@
   <div class="debug">
     <div class="debug__panel debug-panel">
       <h1>Debugger</h1>
-      <button v-if="!isPaused" @click="pause">Pause</button>
-      <button v-if="isPaused" @click="run">Run</button>
-      <button v-if="isPaused" @click="step">Step</button>
+      <button v-if="!isPaused" @click="pause" class="button debug-button">Pause</button>
+      <button v-if="isPaused" @click="run" class="button debug-button is-success">Run</button>
+      <button v-if="isPaused" @click="step" class="button debug-button">Step</button>
       <div class="debug-panel">
         <div class="romdata">
           <p v-for="(line, i) in hexRom" :key="i" class="romdata__line">
             <span v-for="(opcode, j) in line" :key="j" :class="{'opcode--current': j + 8 * i === pc / 2}" class="opcode">{{opcode}}</span>
           </p>
         </div>
-        <ul class="v-registers">
+        <ul class="registers">
           <h2>V-Registers</h2>
-          <div v-for="(register, j) in v" :key="j">
-            v: {{j}}: {{register.toString(16)}}
+          <div v-for="(register, j) in v" :key="j" class="registers__register" :class="{'registers__register--last': j === 7}">
+            {{displayHex(j)}}: {{displayHex(register)}}
           </div>
         </ul>
-        <div class="pc">
+        <ul class="registers">
+          <h2>Stack</h2>
+          <div v-for="(stack, j) in v" :key="j" class="registers__register" :class="{'registers__register--last': j === 7}">
+            {{displayHex(j)}}: {{displayHex(stack)}}
+          </div>
+        </ul>
+        <div class="single-value">
           pc: {{pc}}
         </div>
-        <ul class="stack">
-          <div v-for="(stack, j) in v" :key="j">
-            stack: {{j}}: {{stack.toString(16)}}
-          </div>
-        </ul>
-        <div class="i">
+        <div class="single-value">
           i: {{i}}
         </div>
-        <div class="sp">
+        <div class="single-value">
           sp: {{sp}}
         </div>
       </div>
@@ -63,23 +64,26 @@ export default {
           previous[lastIndex] = [...previous[lastIndex], current]
           return previous
         }, [])
-    },
-    heyPc() {
-      if (this.pc.toString().length > 1) {
-        return `0x`
-      }
     }
   },
   methods: {
     ...mapActions(['pause', 'step', 'run']),
+    displayHex(value) {
+      return value < 16 ? `0${value.toString(16)}` : value.toString(16)
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
- .opcode {
 
+  .debug-panel {
+    font-size: 1.2rem;
+    text-align: left;
+  }
+
+ .opcode {
    display: inline;
    margin-right: 1em;
 
@@ -90,8 +94,27 @@ export default {
  }
 
  .romdata {
-   text-align: left;
    background-color: #222222;
    color: rgb(76, 179, 91);
+   margin-bottom: 2rem;
+ }
+
+ .registers {
+   margin-bottom: 2rem;
+   &__register {
+     display: inline;
+
+     &--last {
+       margin-right: 100%;
+     }
+   }
+ }
+
+ .single-value {
+   margin-bottom: 1rem;
+ }
+
+ .debug-button {
+   margin-right: 1rem;
  }
 </style>
