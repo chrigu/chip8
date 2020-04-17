@@ -4,7 +4,7 @@
       <div class="home__main main column is-full" :class="{'is-three-fifths': debugMode}">
         <div class="main__actions actions">
           <RomSelection class="actions__rom" />
-          <button class="button" @click="toggleDebugMode" :class="{'is-warning': debugMode, 'is-success': !debugMode}">{{debugButtonText}}</button>
+          <button class="button is-hidden-touch" @click="toggleDebugMode" :class="{'is-warning': debugMode, 'is-success': !debugMode}">{{debugButtonText}}</button>
         </div>
         <Display class="main__display" />
         <Keyboard />

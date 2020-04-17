@@ -1,8 +1,8 @@
 <template>
   <div class="rom-selection">
       <div class="rom-selection__select select">
-        <select v-model="selectedRom" @change="romSelected">
-          <option v-for="rom in roms" :key="rom.name" :value="rom.file">{{rom.name}}</option>
+        <select v-model="selectedRom" @change="romSelected()" ref="selection">
+          <option v-for="rom in roms" :key="rom.name" :value="rom.file" >{{rom.name}}</option>
         </select>
       </div>
       <!--p class="rom-selection__text">or upload own ROM</p-->
@@ -70,11 +70,12 @@ export default {
   },
   methods: {
     ...mapActions(['setRom']),
-    romSelected() {
-      const url = `/roms/${this.selectedRom}`;
+    romSelected(target) {
+      const url = `/roms/${this.selectedRom}`
       fetch(url)
       .then(data => data.blob())
       .then(data => this.setRom(data))
+      this.$refs.selection.blur()
     }
   },
   mounted() {
