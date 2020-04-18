@@ -29,6 +29,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   &__title {
     font-family: 'bitwise', Helvetica, Arial, sans-serif;

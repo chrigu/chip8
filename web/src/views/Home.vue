@@ -9,7 +9,7 @@
         <Display class="main__display" />
         <Keyboard />
       </div>
-      <div class="home__debug column is-hidden-touch" :class="{'home__debug__visible': debugMode}">
+      <div class="home__debug column is-hidden-touch" :class="{'home__debug--visible': debugMode}">
         <Debug />
       </div>
     </div>
@@ -69,8 +69,10 @@ export default {
   }
 
   &__debug {
+    display: none !important;
     &--visible {
-      width: 100%;
+      display: block !important;
+      width: 20%;
     }
   }
 }
