@@ -57,6 +57,10 @@ export default {
           'file': 'Pong.ch8'
         },
         {
+          'name': 'Tetris',
+          'file': 'Tetris.ch8'
+        },
+        {
           'name': 'Trip8 Demo',
           'file': 'Trip8_Demo.ch8'
         },
