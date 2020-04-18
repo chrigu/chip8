@@ -9,7 +9,7 @@
         <Display class="main__display" />
         <Keyboard />
       </div>
-      <div class="home__debug column" :class="{'home__debug__visible': debugMode}">
+      <div class="home__debug column is-hidden-touch" :class="{'home__debug__visible': debugMode}">
         <Debug />
       </div>
     </div>

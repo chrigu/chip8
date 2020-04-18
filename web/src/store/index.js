@@ -10,8 +10,8 @@ let paused = false;
 const renderLoopFactory = (chip8, callback) => {
   const renderLoop = () => {
     if (!paused) {
-      chip8.tick();
-      animationId = requestAnimationFrame(renderLoop);
+      chip8.tick()
+      animationId = requestAnimationFrame(renderLoop)
       callback()
     }
   };
@@ -111,19 +111,19 @@ export default (chip8) => {
         renderLoop()
       },
       step({commit, state}) {
-        chip8.tick();
+        chip8.tick()
         if (state.debugMode) {
           commitChip8Internals(commit, chip8)
         }
       },
       keydown(store, keyCode) {
-        let chip8Key = mapKey(keyCode);
+        let chip8Key = mapKey(keyCode)
         if (chip8Key > 0) {
           chip8.keydown(chip8Key)
         }
       },
       keyup(store, keyCode) {
-        let chip8Key = mapKey(keyCode);
+        let chip8Key = mapKey(keyCode)
         if (chip8Key > 0) {
           chip8.keyup(chip8Key)
         }

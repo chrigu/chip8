@@ -15,9 +15,6 @@ import { mapActions } from 'vuex'
 
 export default {
   name: 'Keyboard',
-  components: {
-    Keyboard
-  },
   data() {
     return {
       keys: [

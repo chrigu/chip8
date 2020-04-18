@@ -50,17 +50,21 @@ export const stack = new Uint16Array(
 init_panic_hook();
 
 export function initDisplay(displayId) {
-    displayElement = document.getElementsByClassName(displayId)[0];
-    const dpr = window.devicePixelRatio || 1;
-    // Get the size of the canvas in CSS pixels.
-    const rect = displayElement.getBoundingClientRect();
-    displayElement.width = rect.width * dpr;
-    displayElement.height = rect.height * dpr;
-
-    const ctx = displayElement.getContext("2d");
-    // Scale all drawing operations by the dpr, so you
-    // don't have to worry about the difference.
-    ctx.scale(dpr, dpr);
+  displayElement = document.getElementsByClassName(displayId)[0]
+  const dpr = window.devicePixelRatio || 1
+  // Get the size of the canvas in CSS pixels.
+  const rect = displayElement.getBoundingClientRect()
+  console.log(rect.width, rect.height)
+  displayElement.width = rect.width * dpr
+  displayElement.height = rect.height * dpr
+  const ctx = displayElement.getContext("2d")
+  // Scale all drawing operations by the dpr, so you
+  // don't have to worry about the difference.
+  // but why if?!
+  if (displayElement.width > 640)
+  {
+    ctx.scale(dpr, dpr)
+  }
 }
 
 export function loadRomFromFile(readerResult) {
