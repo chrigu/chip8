@@ -103,23 +103,6 @@ function drawPixel(x, y, set, ctx) {
   ctx.fillRect(x, y, pixelSize, pixelSize);
 }
 
-// render loop
-
-const renderLoop = () => {
-  // console.log(cpu.read_pc(), 'pc')
-  tick();
-  animationId = requestAnimationFrame(renderLoop);
-};
-
-export function pause () {
-  cancelAnimationFrame(animationId);
-  animationId = null;
-};
-
-function isPaused () {
-  return animationId === null;
-}
-
 // keys
 export function keydown(keyCode) {
   if (16 > keyCode > 0) {

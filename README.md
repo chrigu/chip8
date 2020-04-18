@@ -50,7 +50,7 @@ wasm-pack test --headless --firefox
 wasm-pack publish
 ```
 
-## Inspiration
+## Inspiration & references
 
 http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/
 
@@ -61,8 +61,6 @@ http://devernay.free.fr/hacks/chip8/C8TECH10.HTM
 http://emulator101.com/chip-8-instruction-set.html
 
 https://github.com/learnopengles/chip8-rust
-
-Opcode
 
 https://github.com/trapexit/chip-8_documentation
 

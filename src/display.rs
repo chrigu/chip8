@@ -43,8 +43,6 @@ impl Display {
     }
 
     pub fn draw_sprite_at_position(&mut self, x_left: usize, y_top: usize, sprite: &[u8]) -> bool {
-        // let position = y * WIDTH + x;
-        // self.memory[position] = bool;
         let mut collision = false;
 
         for (sprite_row, byte) in sprite.iter().enumerate() {

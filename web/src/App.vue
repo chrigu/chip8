@@ -9,7 +9,10 @@
     <footer class="footer">
       <div class="content has-text-centered">
         <p>
-          some footer
+          <a class="footer__link" href="https://github.com/chrigu/chip8">Fork me on Github</a>
+        </p>
+        <p>
+          <a class="footer__link" href="https://github.com/dmatlack/chip8/tree/master/roms">ROMs</a>
         </p>
       </div>
     </footer>
@@ -36,6 +39,18 @@
 
 .emulator {
   flex: 1;
+}
+
+.footer {
+  background-color: rgb(76, 179, 91) !important;
+  &__link {
+    color: #222222;
+
+    &:hover {
+      color: #222222;
+      text-decoration: underline;
+    }
+  }
 }
 
 </style>

@@ -120,7 +120,7 @@ impl Cpu {
             0x6000..=0x6FFF => { // Set vX 
                 let register = (opcode & 0x0F00) >> 8;
                 self.v[register as usize] = opcode_register_value(opcode);
-                log!("set vx: {} with {}", register, opcode_register_value(opcode));
+                //log!("set vx: {} with {}", register, opcode_register_value(opcode));
                 
             }
             0x7000..=0x7FFF => { // Add vX 
@@ -235,18 +235,16 @@ impl Cpu {
             0xE000..=0xEFFF => {
                 let first_two_octets = opcode_register_value(opcode);
                 let vx = opcode_3rd_octet(opcode) as usize;
-                log!("0xe vx: {}, key set: {}, set {}", vx, self.v[vx], self.keyboard.is_key_set(self.v[vx]) );
+                //log!("0xe vx: {}, key set: {}, set {}", vx, self.v[vx], self.keyboard.is_key_set(self.v[vx]) );
 
                 match first_two_octets {
                     0x9E => { // Skip if pressed
                         if self.keyboard.is_key_set(self.v[vx]) {
-                            log!("skip if");
                             self.pc += 2;
                         }
                     }
                     0xA1 => { // Skip if not pressed
                         if !self.keyboard.is_key_set(self.v[vx]) {
-                            log!("skip if not");
                             self.pc += 2;
                         }
                     }
@@ -258,7 +256,7 @@ impl Cpu {
             0xF000..=0xFFFF => {
                 let first_two_octets = opcode_register_value(opcode);
                 let vx = opcode_3rd_octet(opcode) as usize;
-                log!("0xf vx: {}, key set: {}", vx, self.v[vx]);
+                //log!("0xf vx: {}, key set: {}", vx, self.v[vx]);
 
                 match first_two_octets {
                     0x07 => { // vx = dt
@@ -268,7 +266,6 @@ impl Cpu {
                         let mut found = false;
                         for i in 0..NUM_KEYS {
                             if self.keyboard.is_key_set(i as u8) {
-                                log!("key set {}", vx);
                                 self.v[vx] = i as u8;
                                 found = true;
                             }
@@ -285,7 +282,6 @@ impl Cpu {
                         self.sound_timer = self.v[vx];
                     }
                     0x1E => { // add i
-                        log!("vx ({}) content {}", vx, self.v[vx] );
                         self.i += self.v[vx] as u16;
                     }
                     0x33 => { // add i
