@@ -212,7 +212,7 @@ impl Cpu {
                 let vx = opcode_3rd_octet(opcode) as usize;
 
                 self.v[vx] = (random as u16 & (opcode & 0xFF)) as u8;
-                log!("random {}", self.v[vx]);
+                //log!("random {}", self.v[vx]);
             }
             0xD000..=0xDFFF => { // Draw sprite
                 let vx = opcode_3rd_octet(opcode) as usize;
